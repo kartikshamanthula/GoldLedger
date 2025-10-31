@@ -90,7 +90,7 @@ const data = {
       ],
     },
     {
-      title: "Quotations",
+      title: "Quotation",
       icon: FileText,
     },
     {
