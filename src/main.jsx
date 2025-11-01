@@ -2,13 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import App from "./Routes/App";
+import Router from "./Routes/Route";
 import "./index.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
       <BrowserRouter>
-        <App />
+        <Router />
       </BrowserRouter>
   </React.StrictMode>
 );
