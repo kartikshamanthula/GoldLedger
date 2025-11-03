@@ -1,7 +1,7 @@
 import React from 'react'
 import VoucherTable from "../../Reuseable/Table/voucherTable"
 
-function Opening() {
+function SalesReturn() {
     return (
         <div>
             <VoucherTable />
@@ -9,4 +9,4 @@ function Opening() {
     )
 }
 
-export default Opening
+export default SalesReturn

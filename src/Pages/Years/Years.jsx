@@ -1,10 +1,10 @@
 import React from 'react'
-import DemoTable from '../../Reuseable/Table/Table'
+import YearTable from '../../Reuseable/Table/yearTable'
 
 const Years = () => {
     return (
     <div>
-        <DemoTable />
+        <YearTable />
     </div>
     );
 };

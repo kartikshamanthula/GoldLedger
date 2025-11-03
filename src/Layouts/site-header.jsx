@@ -6,7 +6,7 @@ import { motion } from "framer-motion"
 import {
   LayoutDashboard,
   FileBarChart,
-  Settings,
+  Keyboard,
   Search,
   UserCircle2,
 } from "lucide-react"
@@ -52,7 +52,7 @@ export function SiteHeader() {
         
         <div className="flex items-center gap-4 text-gray-700">
           <FileBarChart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
-          <Settings className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
+          <Keyboard className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
           <Search className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
           <UserCircle2 className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
         </div>
@@ -60,7 +60,7 @@ export function SiteHeader() {
         
         <motion.div
           className="w-10 h-10 flex items-center justify-center rounded-full bg-linear-to-tr from-blue-500 via-purple-500 to-pink-500 text-white shadow-md cursor-pointer"
-          animate={{ rotate: 360 || -360 }}
+          animate={{ rotate: 360 }}
           transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
         >
           <LayoutDashboard className="w-5 h-5" />
