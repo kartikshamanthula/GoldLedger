@@ -144,7 +144,7 @@ const navData = [
   {
     title: "Team",
     icon: Users,
-    yrl: "/team"
+    url: "/teams"
   },
 ]
 
