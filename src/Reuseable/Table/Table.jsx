@@ -25,7 +25,7 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Pencil, Trash2, FunnelPlus, SquarePlus } from "lucide-react";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
 import Form from "../Modelform/Form";
 import FilterForm from "../Filterform/FilterForm";
 
@@ -39,10 +39,10 @@ const SkeletonRow = ({ columns }) => (
     </TableRow>
 );
 
-const data = [
+const initialData = [
     {
         id: 1,
-        group: "Electronics",
+        group: "Primary",
         name: "Smartphone",
         type: "Product",
         hsn: "8517",
@@ -53,7 +53,7 @@ const data = [
     },
     {
         id: 2,
-        group: "Services",
+        group: "Primary",
         name: "Software Maintenance",
         type: "Service",
         hsn: "9983",
@@ -64,7 +64,7 @@ const data = [
     },
     {
         id: 3,
-        group: "Stationery",
+        group: "Primary",
         name: "Printer Ink",
         type: "Product",
         hsn: "3215",
@@ -75,116 +75,126 @@ const data = [
     },
 ];
 
-export const columns = [
-    {
-        accessorKey: "group",
-        header: "Group",
-        cell: ({ row }) => <span>{row.getValue("group")}</span>,
-    },
-    {
-        accessorKey: "name",
-        header: "Name",
-        cell: ({ row }) => <span className="font-medium">{row.getValue("name")}</span>,
-    },
-    {
-        accessorKey: "type",
-        header: "Type",
-        cell: ({ row }) => <span>{row.getValue("type")}</span>,
-    },
-    {
-        accessorKey: "hsn",
-        header: "HSN/SAC Code",
-        cell: ({ row }) => <span>{row.getValue("hsn")}</span>,
-    },
-    {
-        accessorKey: "gst",
-        header: "GST",
-        cell: ({ row }) => <span>{row.getValue("gst")}</span>,
-    },
-    {
-        accessorKey: "unit",
-        header: "Unit",
-        cell: ({ row }) => <span>{row.getValue("unit")}</span>,
-    },
-    {
-        accessorKey: "stock",
-        header: "Want Stock",
-        cell: ({ row }) => (
-            <span
-                className={`px-2 py-1 text-xs font-semibold rounded-full ${row.getValue("stock") === "Yes"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-gray-100 text-gray-600"
-                    }`}
-            >
-                {row.getValue("stock")}
-            </span>
-        ),
-    },
-    {
-        accessorKey: "status",
-        header: "Status",
-        cell: ({ row }) => {
-            const status = row.getValue("status");
-            const color =
-                status === "Active"
-                    ? "bg-green-100 text-green-700"
-                    : "bg-red-100 text-red-700";
-            return (
-                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${color}`}>
-                    {status}
-                </span>
-            );
-        },
-    },
-    {
-        id: "actions",
-        header: "Actions",
-        cell: ({ row }) => (
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-gray-100 focus:ring-2 focus:ring-blue-200"
-                    >
-                        <MoreVertical className="h-4 w-4 text-gray-600" />
-                    </Button>
-                </DropdownMenuTrigger>
-
-                <DropdownMenuContent align="end" className="w-36 shadow-md border border-gray-100">
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem
-                        onClick={() => console.log("Edit:", row.original)}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-blue-50 text-blue-600"
-                    >
-                        <Pencil className="w-4 h-4 text-blue-600" />
-                        <span>Edit</span>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                        onClick={() => console.log("Delete:", row.original)}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-red-50 text-red-600"
-                    >
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                        <span>Delete</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-        ),
-    },
-];
-
-export function DemoTable() {
+export default function DemoTable() {
+    const [data, setData] = React.useState(initialData);
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
     const [columnVisibility, setColumnVisibility] = React.useState({});
     const [rowSelection, setRowSelection] = React.useState({});
     const [loading, setLoading] = React.useState(true);
+    const [editData, setEditData] = React.useState(null);
+    const [isFormOpen, setIsFormOpen] = React.useState(false);
 
+    
     React.useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 2000); // ⏳ Simulate data loading delay
+        const timer = setTimeout(() => setLoading(false), 2000);
         return () => clearTimeout(timer);
     }, []);
+
+    const columns = [
+        {
+            accessorKey: "group",
+            header: "Group",
+            cell: ({ row }) => <span>{row.getValue("group")}</span>,
+        },
+        {
+            accessorKey: "name",
+            header: "Name",
+            cell: ({ row }) => <span className="font-medium">{row.getValue("name")}</span>,
+        },
+        {
+            accessorKey: "type",
+            header: "Type",
+            cell: ({ row }) => <span>{row.getValue("type")}</span>,
+        },
+        {
+            accessorKey: "hsn",
+            header: "HSN/SAC Code",
+            cell: ({ row }) => <span>{row.getValue("hsn")}</span>,
+        },
+        {
+            accessorKey: "gst",
+            header: "GST",
+            cell: ({ row }) => <span>{row.getValue("gst")}</span>,
+        },
+        {
+            accessorKey: "unit",
+            header: "Unit",
+            cell: ({ row }) => <span>{row.getValue("unit")}</span>,
+        },
+        {
+            accessorKey: "stock",
+            header: "Want Stock",
+            cell: ({ row }) => (
+                <span
+                    className={`px-2 py-1 text-xs font-semibold rounded-full ${row.getValue("stock") === "Yes"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-gray-100 text-gray-600"
+                        }`}
+                >
+                    {row.getValue("stock")}
+                </span>
+            ),
+        },
+        {
+            accessorKey: "status",
+            header: "Status",
+            cell: ({ row }) => {
+                const status = row.getValue("status");
+                const color =
+                    status === "Active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700";
+                return (
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${color}`}>
+                        {status}
+                    </span>
+                );
+            },
+        },
+        {
+            id: "actions",
+            header: "Actions",
+            cell: ({ row }) => (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-gray-100 focus:ring-2 focus:ring-blue-200"
+                        >
+                            <MoreVertical className="h-4 w-4 text-black" />
+                        </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent
+                        align="end"
+                        className="w-36 shadow-md border border-gray-100"
+                    >
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setEditData(row.original);
+                                setIsFormOpen(true);
+                            }}
+                            className="flex items-center gap-2 cursor-pointer hover:bg-blue-50 text-blue-600"
+                        >
+                            <Pencil className="w-4 h-4 text-blue-600" />
+                            <span>Edit</span>
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                            onClick={() => console.log("Delete:", row.original)}
+                            className="flex items-center gap-2 cursor-pointer hover:bg-red-50 text-red-600"
+                        >
+                            <Trash2 className="w-4 h-4 text-red-500" />
+                            <span>Delete</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            ),
+        },
+    ];
 
     const table = useReactTable({
         data,
@@ -202,16 +212,24 @@ export function DemoTable() {
 
     return (
         <>
-            <div
-                className=" flex items-center gap-2 mt-6 mb-4 ml-220 "
-            >
+            <div className="flex items-center gap-2 mt-6 mb-4 ml-220">
                 <div>
                     <FilterForm />
                 </div>
-                    <div>
-                        <Form />
-                    </div>
+                <div>
+                    <Form
+                        open={isFormOpen}
+                        onOpenChange={(open) => {
+                            setIsFormOpen(open);
+                            if (!open) setEditData(null);
+                        }}
+                        data={editData}
+                    />
+
+                </div>
             </div>
+
+            
             <div className="overflow-x-auto rounded-md border border-gray-200 bg-white shadow-sm mt-6">
                 <Table>
                     <TableHeader className="bg-gray-50">
@@ -291,5 +309,3 @@ export function DemoTable() {
         </>
     );
 }
-
-export default DemoTable;

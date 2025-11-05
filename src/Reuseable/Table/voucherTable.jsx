@@ -139,7 +139,7 @@ export function ItemsTable() {
     const [loading, setLoading] = React.useState(true);
 
     React.useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 2000); // ⏳ Simulate data loading delay
+        const timer = setTimeout(() => setLoading(false), 1000);
         return () => clearTimeout(timer);
     }, []);
 

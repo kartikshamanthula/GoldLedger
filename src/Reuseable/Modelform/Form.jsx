@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -16,15 +16,17 @@ import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover
 import {
     Command,
     CommandEmpty,
-    CommandGroup,
+    CommandGroup,   
     CommandInput,
     CommandItem,
     CommandList,
 } from "@/components/ui/command"
-import { Check, Package, Settings } from "lucide-react"
+import { Check, Package, Settings, Pencil } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export default function Form() {
+export default function Form( {open, onOpenChange, data}) {
+    const isEditMode = Boolean(data);
+
     const [name, setName] = useState("")
     const [group, setGroup] = useState("")
     const [type, setType] = useState("")
@@ -43,36 +45,69 @@ export default function Form() {
         if (!name) newErrors.name = "Name is required"
         if (!group) newErrors.group = "Group is required"
         if (!type) newErrors.type = "Type is required"
+        if (!hsn) newErrors.hsn = "HSN/SAC Code is required"
         if (!unit) newErrors.unit = "Unit is required"
         if (!status) newErrors.status = "Status is required"
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
 
+    useEffect(() => {
+        if(data){
+            setName(data.name || "");
+            setGroup(data.group || "");
+            setType(data.type || "");
+            setHsn(data.hsn || "");
+            setUnit(data.unit || "");
+            setStatus(data.status || "");
+                }
+                else
+                {
+                    setName("");
+                    setGroup("");
+                    setType("");
+                    setHsn("");
+                    setUnit("");
+                    setStatus("");
+                }
+    }, [data,open]);
+
+
     const handleSave = () => {
         if (validateForm()) {
-            alert("✅ Form submitted successfully!")
+            if(isEditMode){
+                alert('✅ item submitted successfully!');
+            }
+        else{
+            alert('✅ Item created successfully!');
+            }
+            onOpenChange(false);
         }
-    }
+    };
 
     return (
-        <Sheet>
+        <Sheet onOpenChange={onOpenChange} open={open}>
+            {!isEditMode&&(
             <SheetTrigger asChild>
                 <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-500 py-2 px-4 text-white font-semibold rounded transition">
                     <Package className="w-5 h-5" />
                     Create New Item
                 </Button>
             </SheetTrigger>
-
+            )}
             <SheetContent className="sm:max-w-[480px] overflow-y-auto">
                 <SheetHeader className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <Package className="w-8 h-8 text-blue-700" />
+                            {isEditMode ?  (
+                                <Pencil className="w-8 h-8 text-blue-700" />
+                            ):(
+                                    <Package className="w-8 h-8 text-blue-700" />
+                            )}
                             <div>
-                                <SheetTitle>Create New Item</SheetTitle>
+                                <SheetTitle>{isEditMode ? "Edit items" : "create new item"}</SheetTitle>
                                 <SheetDescription>
-                                    Fill in the details below to create a new item.
+                                    {isEditMode ?  "modified the details below to update the item." : "Fill in the details below to create a new item."}
                                 </SheetDescription>
                             </div>
                         </div>
@@ -146,7 +181,7 @@ export default function Form() {
 
                 <SheetFooter className="flex justify-end gap-3 mt-4">
                     <Button onClick={handleSave} className="bg-blue-700 hover:bg-blue-500 text-white">
-                        ✅ Save
+                        {isEditMode ? "💾 Update" : "✅ Save"}
                     </Button>
                     <SheetClose asChild>
                         <Button variant="outline">❎ Close</Button>
@@ -155,7 +190,7 @@ export default function Form() {
             </SheetContent>
         </Sheet>
     )
-}
+
 
 function Dropdown({ label, value, setValue, options, error }) {
     return (
@@ -189,4 +224,5 @@ function Dropdown({ label, value, setValue, options, error }) {
             {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
     )
+}
 }
