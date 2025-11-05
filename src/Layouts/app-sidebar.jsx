@@ -60,86 +60,91 @@ const navData = [
     title: "Vouchers",
     icon: Receipt,
     items: [
-      { title: "Estimate", url: "#", icon: FileText },
-      { title: "Sales", url: "#", icon: ShoppingCart },
-      { title: "Sale Return", url: "#", icon: CreditCard },
-      { title: "Purchase", url: "#", icon: ShoppingCart },
-      { title: "Purchase Return", url: "#", icon: CreditCard },
-      { title: "Credit Note", url: "#", icon: FileText },
-      { title: "Debit Note", url: "#", icon: FileText },
-      { title: "Receipt Note", url: "#", icon: FileText },
-      { title: "Delivery Challans", url: "#", icon: FileText },
-      { title: "Opening", url: "#", icon: FileSpreadsheet },
+      { title: "Estimate", url: "/estimate", icon: FileText },
+      { title: "Sales", url: "/sales", icon: ShoppingCart },
+      { title: "Sale Return", url: "/salesreturn", icon: CreditCard },
+      { title: "Purchase", url: "/purchase", icon: ShoppingCart },
+      { title: "Purchase Return", url: "/purchasereturn", icon: CreditCard },
+      { title: "Credit Note", url: "/creditnote", icon: FileText },
+      { title: "Debit Note", url: "/debitnote", icon: FileText },
+      { title: "Receipt Note", url: "/receiptnote", icon: FileText },
+      { title: "Delivery Challans", url: "/deliverychallans", icon: FileText },
+      { title: "Opening", url: "/opening", icon: FileSpreadsheet },
     ],
   },
   {
     title: "Jobwork",
     icon: Briefcase,
     items: [
-      { title: "Material In", url: "#", icon: FileText },
-      { title: "Material Out", url: "#", icon: FileText },
+      { title: "Material In", url: "/materialin", icon: FileText },
+      { title: "Material Out", url: "/materialout", icon: FileText },
     ],
   },
   {
     title: "Order",
     icon: ShoppingCart,
     items: [
-      { title: "Order Purchase", url: "#", icon: FileText },
-      { title: "Order Sale", url: "#", icon: FileText },
+      { title: "Order Purchase", url: "/orderpurchase", icon: FileText },
+      { title: "Order Sales", url: "/ordersales", icon: FileText },
     ],
   },
   {
     title: "Quotations",
     icon: FileText,
+    url: "/quotations"
   },
   {
     title: "Payments",
     icon: CreditCard,
+    url: "/payments"
   },
   {
     title: "Receipts",
     icon: FileSpreadsheet,
+    url: "/receipts"
   },
   {
     title: "Ledgers",
     icon: Users,
     items: [
-      { title: "Ledgers", url: "#", icon: Users },
-      { title: "Ledger Groups", url: "#", icon: FileText },
+      { title: "Ledgers", url: "/ledgers", icon: Users },
+      { title: "Ledger Groups", url: "/ledgergroups", icon: FileText },
     ],
   },
   {
     title: "Transfers",
     icon: PieChart,
+    url: "/transfers"
   },
   {
     title: "Reports",
     icon: FileText,
     items: [
-      { title: "Ledger Report", url: "#", icon: FileText },
-      { title: "Balance Sheet", url: "#", icon: FileSpreadsheet },
-      { title: "Cash Flow", url: "#", icon: PieChart },
-      { title: "Day Book", url: "#", icon: Calendar },
-      { title: "Profit & Loss", url: "#", icon: FileText },
-      { title: "Trial Balance", url: "#", icon: FileText },
-      { title: "Stock", url: "#", icon: Package },
-      { title: "Voucher", url: "#", icon: Receipt },
-      { title: "Daily Register", url: "#", icon: FileText },
-      { title: "Ageing", url: "#", icon: Calendar },
-      { title: "TDS Report", url: "#", icon: FileSpreadsheet },
+      { title: "Ledger Report", url: "/ledgerreport", icon: FileText },
+      { title: "Balance Sheet", url: "/balancesheet", icon: FileSpreadsheet },
+      { title: "Cash Flow", url: "/cashflow", icon: PieChart },
+      { title: "Day Book", url: "/daybook", icon: Calendar },
+      { title: "Profit & Loss", url: "/profitloss", icon: FileText },
+      { title: "Trial Balance", url: "/trialbalance", icon: FileText },
+      { title: "Stock", url: "/stock", icon: Package },
+      { title: "Voucher", url: "/voucher", icon: Receipt },
+      { title: "Daily Register", url: "/dailyregister", icon: FileText },
+      { title: "Ageing", url: "/ageing", icon: Calendar },
+      { title: "TDS Report", url: "/tdsreport", icon: FileSpreadsheet },
     ],
   },
   {
     title: "GST",
     icon: FileSpreadsheet,
     items: [
-      { title: "GSTR-1", url: "#", icon: FileText },
-      { title: "GST2B", url: "#", icon: FileSpreadsheet },
+      { title: "GSTR-1", url: "/gstr1", icon: FileText },
+      { title: "GST2B", url: "gst2b", icon: FileSpreadsheet },
     ],
   },
   {
     title: "Team",
     icon: Users,
+    yrl: "/team"
   },
 ]
 
@@ -147,11 +152,11 @@ export function AppSidebar(props) {
   const location = useLocation()
   const [activeMenu, setActiveMenu] = React.useState(null)
 
-  // ✅ Auto-select menu/submenu based on current route
+  
   React.useEffect(() => {
     const currentPath = location.pathname
 
-    // Find which main menu or submenu matches
+    
     const foundMenu = navData.find((item) =>
       item.url === currentPath
         ? true
@@ -161,13 +166,12 @@ export function AppSidebar(props) {
     if (foundMenu) {
       setActiveMenu(foundMenu.title)
     } else {
-      setActiveMenu("Dashboard") // default
+      setActiveMenu("Dashboard")
     }
   }, [location.pathname])
 
   return (
     <Sidebar {...props} className="bg-gray-200 text-black">
-      {/* Logo Section */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -190,7 +194,6 @@ export function AppSidebar(props) {
         </SidebarMenu>
       </SidebarHeader>
 
-      {/* Navigation */}
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
@@ -242,7 +245,6 @@ export function AppSidebar(props) {
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
 
-                    {/* Submenu */}
                     {item.items?.length > 0 && (
                       <CollapsibleContent>
                         <SidebarMenuSub>

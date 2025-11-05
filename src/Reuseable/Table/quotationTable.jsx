@@ -25,9 +25,9 @@ import {
     DropdownMenuItem,
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { group } from "console";
-
+import { MoreVertical, Pencil, Trash2, FunnelPlus, SquarePlus } from "lucide-react";
+import Form from "../Modelform/Form";
+import FilterForm from "../Filterform/FilterForm";
 
 const SkeletonRow = ({ columns }) => (
     <TableRow>
@@ -42,31 +42,99 @@ const SkeletonRow = ({ columns }) => (
 const data = [
     {
         id: 1,
-        name: "Electronics",
-        shortname: "electronics",
+        group: "Electronics",
+        name: "Smartphone",
+        type: "Product",
+        hsn: "8517",
+        gst: "18%",
+        unit: "Piece",
+        stock: "Yes",
+        status: "Active",
     },
     {
         id: 2,
-        name: "Services",
-        shortname: "services",
+        group: "Services",
+        name: "Software Maintenance",
+        type: "Service",
+        hsn: "9983",
+        gst: "18%",
+        unit: "Hour",
+        stock: "No",
+        status: "Active",
     },
     {
         id: 3,
-        name: "Stationery",
-        shortname: "stationery",
+        group: "Stationery",
+        name: "Printer Ink",
+        type: "Product",
+        hsn: "3215",
+        gst: "12%",
+        unit: "Bottle",
+        stock: "Yes",
+        status: "Inactive",
     },
 ];
 
 export const columns = [
     {
-        accessorKey: "Name",
-        header: "Name",
-        cell: ({ row }) => <span>{row.getValue("name")}</span>,
+        accessorKey: "group",
+        header: "Group",
+        cell: ({ row }) => <span>{row.getValue("group")}</span>,
     },
     {
-        accessorKey: "Short Name",
-        header: "Short Name",
-        cell: ({ row }) => <span className="font-medium">{row.getValue("shortname")}</span>,
+        accessorKey: "name",
+        header: "Name",
+        cell: ({ row }) => <span className="font-medium">{row.getValue("name")}</span>,
+    },
+    {
+        accessorKey: "type",
+        header: "Type",
+        cell: ({ row }) => <span>{row.getValue("type")}</span>,
+    },
+    {
+        accessorKey: "hsn",
+        header: "HSN/SAC Code",
+        cell: ({ row }) => <span>{row.getValue("hsn")}</span>,
+    },
+    {
+        accessorKey: "gst",
+        header: "GST",
+        cell: ({ row }) => <span>{row.getValue("gst")}</span>,
+    },
+    {
+        accessorKey: "unit",
+        header: "Unit",
+        cell: ({ row }) => <span>{row.getValue("unit")}</span>,
+    },
+    {
+        accessorKey: "stock",
+        header: "Want Stock",
+        cell: ({ row }) => (
+            <span
+                className={`px-2 py-1 text-xs font-semibold rounded-full ${row.getValue("stock") === "Yes"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-gray-100 text-gray-600"
+                    }`}
+            >
+                {row.getValue("stock")}
+            </span>
+        ),
+    },
+    {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => {
+            const status = row.getValue("status");
+            const color =
+                status === "Active"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-red-100 text-red-700";
+            return (
+                <span className={`px-2 py-1 text-xs font-semibold rounded-full ${color}`}>
+                    {status}
+                </span>
+            );
+        },
     },
     {
         id: "actions",
@@ -106,7 +174,7 @@ export const columns = [
     },
 ];
 
-export function DemoTable() {
+export function QuotationsTable() {
     const [sorting, setSorting] = React.useState([]);
     const [columnFilters, setColumnFilters] = React.useState([]);
     const [columnVisibility, setColumnVisibility] = React.useState({});
@@ -134,6 +202,16 @@ export function DemoTable() {
 
     return (
         <>
+            <div
+                className=" flex items-center gap-2 mt-6 mb-4 ml-220 "
+            >
+                <div>
+                    <FilterForm />
+                </div>
+                    <div>
+                        <Form />
+                    </div>
+            </div>
             <div className="overflow-x-auto rounded-md border border-gray-200 bg-white shadow-sm mt-6">
                 <Table>
                     <TableHeader className="bg-gray-50">
@@ -214,4 +292,4 @@ export function DemoTable() {
     );
 }
 
-export default DemoTable;
+export default QuotationsTable;
