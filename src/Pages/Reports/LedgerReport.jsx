@@ -1,7 +1,7 @@
 import React from 'react'
 import ReportsTable from '../../Reuseable/Table/reportsTable'
 
-function Ageing() {
+function LedgerReport() {
     return (
         <div>
             <ReportsTable />
@@ -9,4 +9,4 @@ function Ageing() {
     )
 }
 
-export default Ageing
+export default LedgerReport
