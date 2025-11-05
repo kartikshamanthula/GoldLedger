@@ -4,7 +4,9 @@ import VoucherTable from "../../Reuseable/Table/voucherTable"
 function Estimate() {
     return (
         <div>
-            <VoucherTable />
+            <VoucherTable
+            
+            />
         </div>
     )
 }

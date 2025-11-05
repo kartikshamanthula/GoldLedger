@@ -34,6 +34,8 @@ import {
   Repeat,
   BarChart,
   Percent,
+  FileSpreadsheet,
+  PieChart,
 } from "lucide-react";
 
 import {
@@ -63,17 +65,17 @@ export function SiteHeader() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Alt + F opens the search dialog
+
       if (e.altKey && e.key.toLowerCase() === "f") {
-        e.preventDefault(); // prevent browser's default find behavior
+        e.preventDefault();
         setSearchOpen(true);
       }
       if (e.altKey && e.key.toLowerCase() === "A") {
-        e.preventDefault(); // prevent browser's default find behavior
+        e.preventDefault();
         setOpen(true);
       }
 
-      // Escape closes the search dialog
+
       if (e.key === "Escape") {
         setSearchOpen(false);
       }
@@ -89,7 +91,7 @@ export function SiteHeader() {
     { name: "Items groups", path: "/items-groups" },
     { name: "Items units", path: "/Items-Units" },
     { name: "Years", path: "/years" },
-    { name: "Vouchers", path: "/vouchers" },
+    { name: "Estimate", path: "/estimate" },
     { name: "Jobwork", path: "/jobwork" },
     { name: "Order", path: "/order" },
     { name: "Quotations", path: "/quotations" },
@@ -100,219 +102,223 @@ export function SiteHeader() {
     { name: "Transfers", path: "/transfers" },
     { name: "Reports", path: "/reports" },
   ];
-
-
   const filteredRoutes = routes.filter(
     (r) => r.name && r.name.toLowerCase().includes(query.toLowerCase())
   );
 
-  const getHeaderDetails = () => {
-    switch (location.pathname) {
-      case "/dashboard":
-        return {
-          icon: <LayoutDashboard className="w-5 h-5 text-indigo-600" />,
-          title: "Dashboard",
-          subtitle: "Overview of your business metrics and activities",
-        };
+  const pageInfo = {
+    "/dashboard": {
+      icon: LayoutDashboard,
+      title: "Dashboard",
+      subtitle: "Overview of your business metrics and activities",
+    },
+    "/items": {
+      icon: Package,
+      title: "Items",
+      subtitle: "Manage and view all available items",
+    },
+    "/items-groups": {
+      icon: Layers,
+      title: "Item Groups",
+      subtitle: "Organize your items into logical groups",
+    },
+    "/items-units": {
+      icon: Ruler,
+      title: "Item Units",
+      subtitle: "Define measurement units for your items",
+    },
+    "/years": {
+      icon: Calendar,
+      title: "Years",
+      subtitle: "Manage fiscal years and reports",
+    },
+    "/estimate": {
+      icon: FileText,
+      title: "Estimate",
+      subtitle: "Create and manage estimates",
+    },
+    "/sales": {
+      icon: ShoppingCart,
+      title: "Sales",
+      subtitle: "Record and manage sales Vouchers",
+    },
+    "/salesreturn": {
+      icon: CreditCard,
+      title: "SalesReturn",
+      subtitle: "Record and manage sales return Vouchers",
+    },
+    "/purchase": {
+      icon: ShoppingCart,
+      title: "Purchase",
+      subtitle: "Record and manage purchase vouchers",
+    },
+    "/purchasereturn": {
+      icon: CreditCard,
+      title: "PurchaseReturn",
+      subtitle: "Record and manage purchase return vouchers",
+    },
+    "/creditnote": {
+      icon: FileText,
+      title: "Creditnote",
+      subtitle: "Record and manage credit notes",
+    },
+    "/debitnote": {
+      icon: FileText,
+      title: "DebiteNote",
+      subtitle: "Record and manage debit notes",
+    },
+    "/receiptnote": {
+      icon: FileText,
+      title: "ReceiptNote",
+      subtitle: "Record and manage receipt notes",
+    },
+    "/deliverychallans": {
+      icon: FileText,
+      title: "DeliveryChallans",
+      subtitle: "Record and manage delivery challans",
+    },
+    "/opening": {
+      icon: FileSpreadsheet,
+      title: "Opening Balance",
+      subtitle: "Record and manage opening balances",
+    },
 
-
-      case "Items":
-        return {
-          icon: <Package className="w-5 h-5 text-indigo-600" />,
-          title: "Items",
-          subtitle: "Manage and view all available items",
-        };
-
-      case "/items/Item-Groups":
-        return {
-          icon: <Layers className="w-5 h-5 text-indigo-600" />,
-          title: "Item Groups",
-          subtitle: "Organize your items into logical groups",
-        };
-
-      case "/items/Item-Units":
-        return {
-          icon: <Ruler className="w-5 h-5 text-indigo-600" />,
-          title: "Item Units",
-          subtitle: "Define measurement units for your items",
-        };
-
-
-      case "/years":
-        return {
-          icon: <Calendar className="w-5 h-5 text-indigo-600" />,
-          title: "Years",
-          subtitle: "Manage your fiscal years and time-based records",
-        };
-
-
-      case "/Estimate":
-        return {
-          icon: <FileText className="w-5 h-5 text-indigo-600" />,
-          title: "Estimate",
-          subtitle: "Create and manage customer estimates and quotations",
-        };
-
-      case "/sales":
-        return {
-          icon: <ShoppingCart className="w-5 h-5 text-indigo-600" />,
-          title: "Sales",
-          subtitle: "Track product sales and customer invoices",
-        };
-
-      case "/sales-return":
-        return {
-          icon: <CreditCard className="w-5 h-5 text-indigo-600" />,
-          title: "Sales Return",
-          subtitle: "Handle and record returned sales items",
-        };
-
-      case "/purchase":
-        return {
-          icon: <Package className="w-5 h-5 text-indigo-600" />,
-          title: "Purchase",
-          subtitle: "Manage supplier purchases and bills",
-        };
-
-      case "/purchase-return":
-        return {
-          icon: <Undo2 className="w-5 h-5 text-indigo-600" />,
-          title: "Purchase Return",
-          subtitle: "Track returned goods and supplier adjustments",
-        };
-
-      case "/credit-note":
-        return {
-          icon: <FileMinus className="w-5 h-5 text-indigo-600" />,
-          title: "Credit Note",
-          subtitle: "Adjust sales invoices with issued credits",
-        };
-
-      case "/debit-note":
-        return {
-          icon: <FilePlus className="w-5 h-5 text-indigo-600" />,
-          title: "Debit Note",
-          subtitle: "Adjust purchases with debit entries",
-        };
-
-      case "/receipt-note":
-        return {
-          icon: <ClipboardList className="w-5 h-5 text-indigo-600" />,
-          title: "Receipt Note",
-          subtitle: "Record received items or payments",
-        };
-
-      case "/delivery-challan":
-        return {
-          icon: <Truck className="w-5 h-5 text-indigo-600" />,
-          title: "Delivery Challan",
-          subtitle: "Track goods delivery without invoices",
-        };
-
-      case "/opening":
-        return {
-          icon: <FolderOpen className="w-5 h-5 text-indigo-600" />,
-          title: "Opening",
-          subtitle: "Initialize your accounts with opening balances",
-        };
-
-
-      case "/Jobwork":
-        return {
-          icon: <Briefcase className="w-5 h-5 text-indigo-600" />,
-          title: "Jobwork",
-          subtitle: "Handle external job processes and work orders",
-        };
-
-
-      case "/Order":
-        return {
-          icon: <ShoppingCart className="w-5 h-5 text-indigo-600" />,
-          title: "Orders",
-          subtitle: "View and manage all customer orders",
-        };
-
-
-      case "/Quotations":
-        return {
-          icon: <FileText className="w-5 h-5 text-indigo-600" />,
-          title: "Quotations",
-          subtitle: "Manage and track all quotations and proposals",
-        };
-
-
-      case "/Payments":
-        return {
-          icon: <CreditCard className="w-5 h-5 text-indigo-600" />,
-          title: "Payments",
-          subtitle: "Track customer and vendor payments",
-        };
-      case "/Task":
-        return {
-          icon: <FileText className="w-5 h-5 text-indigo-600" />,
-          title: "Task",
-          subtitle: "View and manage your tasks",
-        };
-
-
-      case "/Receipts":
-        return {
-          icon: <Receipt className="w-5 h-5 text-indigo-600" />,
-          title: "Receipts",
-          subtitle: "Keep record of received payments and bills",
-        };
-
-
-      case "/Ledgers":
-        return {
-          icon: <Users className="w-5 h-5 text-indigo-600" />,
-          title: "Ledgers",
-          subtitle: "Manage account ledgers and financial records",
-        };
-
-
-      case "/Transfers":
-        return {
-          icon: <Repeat className="w-5 h-5 text-indigo-600" />,
-          title: "Transfers",
-          subtitle: "Track stock and fund transfers",
-        };
-
-
-      case "/Reports":
-        return {
-          icon: <BarChart className="w-5 h-5 text-indigo-600" />,
-          title: "Reports",
-          subtitle: "Analyze data through detailed reports",
-        };
-
-
-      case "/GST":
-        return {
-          icon: <Percent className="w-5 h-5 text-indigo-600" />,
-          title: "GST",
-          subtitle: "Manage GST details and compliance reports",
-        };
-
-
-      case "/Team":
-        return {
-          icon: <Users className="w-5 h-5 text-indigo-600" />,
-          title: "Team",
-          subtitle: "Manage your organization’s members and roles",
-        };
-
-
-      default:
-        return {
-          icon: <LayoutGrid className="w-5 h-5 text-indigo-600" />,
-          title: "SocioLedger",
-          subtitle: "Welcome to your workspace",
-        };
-    }
+    "/materialin": {
+      icon: FileText,
+      title: "Material In",
+      subtitle: "Record and manage materialin vouchers",
+    },
+    "/materialout": {
+      icon: FileText,
+      title: "Material Out",
+      subtitle: "Record and manage materialout vouchers",
+    },
+    "/orderpurchase": {
+      icon: ShoppingCart,
+      title: "Order Purchase",
+      subtitle: "Record and manage order purchase vouchers",
+    },
+    "/ordersales": {
+      icon: ShoppingCart,
+      title: "Order Sales",
+      subtitle: "Record and manage order sales vouchers",
+    },
+    "/quotations": {
+      icon: FileText,
+      title: "Quotations",
+      subtitle: "Manage and view all quotations",
+    },
+    "/payments": {
+      icon: CreditCard,
+      title: "Payments",
+      subtitle: "Manage all payments and transactions",
+    },
+    "/receipts": {
+      icon: Receipt,
+      title: "Receipts",
+      subtitle: "Track customer receipts and incoming payments",
+    },
+    "/ledgers": {
+      icon: Users,
+      title: "Ledgers",
+      subtitle: "Manage and view all ledgers",
+    },
+    "/ledgergroups": {
+      icon: FileText,
+      title: "Ledger Groups",
+      subtitle: "Manage and view all ledger groups",
+    },
+    "/transfers": {
+      icon: PieChart,
+      title: "Transfers",
+      subtitle: "Manage and view all transfers",
+    },
+    "/ledgerreport": {
+      icon: FileText,
+      title: "Ledger Report",
+      subtitle: "Generate and view ledger reports",
+    },
+    "/balancesheet": {
+      icon: FileSpreadsheet,
+      title: "Balance Sheet",
+      subtitle: "Generate and view balance sheet reports",
+    },
+    "/cashflow": {
+      icon: PieChart,
+      title: "Cash Flow",
+      subtitle: "Generate and view cash flow reports",
+    },
+    "/daybook": {
+      icon: Calendar,
+      title: "Day Book",
+      subtitle: "Generate and view day book reports",
+    },
+    "/profitloss": {
+      icon: FileText,
+      title: "Profit & Loss",
+      subtitle: "Generate and view profit and loss reports",
+    },
+    "/trialbalance": {
+      icon: FileText,
+      title: "Trial Balance",
+      subtitle: "Generate and view trial balance reports",
+    },
+    "/stock": {
+      icon: Package,
+      title: "Stock",
+      subtitle: "Manage and view stock reports",
+    },
+    "/voucher": {
+      icon: Receipt,
+      title: "Voucher",
+      subtitle: "Manage and view voucher reports",
+    },
+    "/dailyregister": {
+      icon: FileText,
+      title: "Daily Register",
+      subtitle: "Generate and view daily register reports",
+    },
+    "/ageing": {
+      icon: Calendar,
+      title: "Ageing",
+      subtitle: "Generate and view ageing reports",
+    },
+    "/tdsreport": {
+      icon: FileSpreadsheet,
+      title: "TDS Report",
+      subtitle: "Generate and view tds reports",
+    },
+    "/teams": {
+      icon: Users,
+      title: "Teams",
+      subtitle: "Manage and view all teams",
+    },
+    "/tasks": {
+      icon: FileText,
+      title: "Tasks",
+      subtitle: "Manage and view all tasks",
+    },
+    "/gstr1": {
+      icon: FileText,
+      title: "GSTR-1",
+      subtitle: "Generate and view gstr-1 reports",
+    },
+    "/gst2b": {
+      icon: FileText,
+      title: "GST2B",
+      subtitle: "Generate and view gst2b reports",
+    },
   };
 
-  const { icon, title, subtitle } = getHeaderDetails();
+
+  const currentPage =
+    pageInfo[location.pathname] || {
+      icon: LayoutGrid,
+      title: "SocioLedger",
+      subtitle: "Welcome to your workspace",
+    };
+
+  const Icon = currentPage.icon;
 
   return (
     <header className="flex h-16 items-center justify-between border-b bg-white px-4 shadow-sm">
@@ -322,20 +328,19 @@ export function SiteHeader() {
         <Separator orientation="vertical" className="mx-2 h-6" />
         <div>
           <h1 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            <LayoutDashboard className="w-5 h-5 text-blue-600" />
-            Dashboard
+            <currentPage.icon className="w-5 h-5 text-purple-600" />
+            {currentPage.title}
           </h1>
-          <p className="text-sm text-gray-500">
-            Overview of your business metrics and activities
-          </p>
+          <p className="text-sm text-gray-500">{currentPage.subtitle}</p>
         </div>
       </div>
+
 
 
       <div className="flex items-center gap-4">
 
         <select
-          className="border rounded px-3 py-2 text-md font-medium text-gray-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 me-4"
+          className=" rounded px-3 py-2 text-md font-medium text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 me-4"
           value={year}
           onChange={(e) => setYear(e.target.value)}
         >
@@ -345,7 +350,9 @@ export function SiteHeader() {
         </select>
 
         <div className="flex items-center gap-4 text-gray-700">
-          <FileBarChart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
+          <button onClick={() => navigate("/tasks")}> 
+            <FileBarChart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
+          </button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -525,7 +532,7 @@ export function SiteHeader() {
             </DialogTitle>
           </DialogHeader>
 
-          {/* Search input */}
+
           <div className="relative mt-4">
             <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
             <input
@@ -537,7 +544,6 @@ export function SiteHeader() {
             />
           </div>
 
-          {/* Route list */}
           <div className="max-h-64 overflow-y-auto space-y-1">
             {filteredRoutes.map((route, i) => (
               <div
@@ -564,3 +570,5 @@ export function SiteHeader() {
     </header>
   )
 }
+
+export default SiteHeader

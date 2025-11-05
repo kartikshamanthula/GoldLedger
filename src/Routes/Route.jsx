@@ -23,23 +23,24 @@ import OrderSales from "@/Pages/Order/OrderSales"
 import Quotations from "@/Pages/Quotations/Quotations"
 import Payments from "@/Pages/Payments/Payments"
 import Receipts from "@/Pages/Receipts/Receipts"
-import Ledgers from "../Pages/Ledgers/Ledgers"
-import LedgerGroups from "../Pages/Ledgers/LedgerGroups"
-import Transfers from "../Pages/Transfers/Transfers"
-import LedgerReport from "../Pages/Reports/LedgerReport"
-import BalanceSheet from "../Pages/Reports/BalanceSheet"
-import CashFlow from "../Pages/Reports/CashFlow"
-import DayBook from "../Pages/Reports/DayBook"
-import ProfitLoss from "../Pages/Reports/ProfitLoss"
-import TrialBalance from "../Pages/Reports/TrialBalance"
-import Stock from "../Pages/Reports/Stock"
-import Voucher from "../Pages/Reports/Voucher"
-import DailyRegister from "../Pages/Reports/DailyRegister"
-import Ageing from "../Pages/Reports/Ageing"
-import TDSReport from "../Pages/Reports/TDSReport"
-// import GSTR1 from "../Pages/GST/GSTR1"
-// import GST2B from "../Pages/GST/GST2B"
+import Ledgers from "@/Pages/Ledgers/Ledgers"
+import LedgerGroups from "@/Pages/Ledgers/LedgerGroups"
+import Transfers from "@/Pages/Transfers/Transfers"
+import LedgerReport from "@/Pages/Reports/LedgerReport"
+import BalanceSheet from "@/Pages/Reports/BalanceSheet"
+import CashFlow from "@/Pages/Reports/CashFlow"
+import DayBook from "@/Pages/Reports/DayBook"
+import ProfitLoss from "@/Pages/Reports/ProfitLoss"
+import TrialBalance from "@/Pages/Reports/TrialBalance"
+import Stock from "@/Pages/Reports/Stock"
+import Voucher from "@/Pages/Reports/Voucher"
+import DailyRegister from "@/Pages/Reports/DailyRegister"
+import Ageing from "@/Pages/Reports/Ageing"
+import TDSReport from "@/Pages/Reports/TDSReport"
+import GSTR1 from "@/Pages/GST/GSTR1"
+import GST2B from "@/Pages/GST/GST2B"
 import Teams from "@/Pages/Team/Teams"
+import Tasks from "@/Pages/Task/Tasks"
 
 
 export function Router() {
@@ -53,7 +54,7 @@ export function Router() {
         
         //Items Routes
         <Route path="/items" element={<Items />} />
-        <Route path="/items-groups" element={<ItemsGroups />} />
+        <Route path="/items-Groups" element={<ItemsGroups />} />
         <Route path="/items-units" element={<ItemsUnits />} />
 
         //years Routes
@@ -112,14 +113,16 @@ export function Router() {
         <Route path="/tdsreport" element={<TDSReport />} />
 
 
-        {/* //Gst Routes
+        //Gst Routes
         <Route path="/gstr1" element={<GSTR1 />} />
-        <Route path="/gst2b" element={<GST2B />} /> */}
+        <Route path="/gst2b" element={<GST2B />} />
 
 
         //Team Routes
         <Route path="/teams" element={<Teams />} />
 
+        //Task Routes
+        <Route path = "/tasks" element={<Tasks />} />
 
 
 

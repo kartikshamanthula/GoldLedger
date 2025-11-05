@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical, Pencil, Trash2, SquarePlus } from "lucide-react";
 import Form from "../Modelform/Form";
-
+import FilterForm from "../Filterform/FilterForm";
 
 const SkeletonRow = ({ columns }) => (
     <TableRow>
@@ -162,8 +162,11 @@ export function YearTable() {
     return (
         <>
             <div
-                className=" flex items-center gap-2 mt-6 mb-4 ml-240 "
+                className=" flex items-center gap-2 mt-6 mb-4 ml-220 "
             >
+                <div>
+                    <FilterForm />
+                </div>
                 <div>
                     <Form />
                 </div>

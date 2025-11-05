@@ -171,7 +171,7 @@ export function AppSidebar(props) {
   }, [location.pathname])
 
   return (
-    <Sidebar {...props} className="bg-gray-200 text-black">
+    <Sidebar {...props} className="bg-white text-black mt-3">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -215,13 +215,13 @@ export function AppSidebar(props) {
                         asChild
                         className={`flex items-center gap-2 transition-colors ${
                           isActive
-                            ? "bg-indigo-500 text-black"
-                            : "hover:bg-blue-400 hover:text-white"
+                            ? "bg-amber-500 text-"
+                            : "hover:bg-amber-400 hover:text-white"
                         }`}
                       >
                         {item.url ? (
                           <NavLink to={item.url}>
-                            <item.icon className="w-4 h-4 text-black group-hover:text-indigo-500" />
+                            <item.icon className="w-4 h-4 text-black" />
                             <span className="font-medium">{item.title}</span>
                             {item.items?.length > 0 && (
                               <>
@@ -232,7 +232,7 @@ export function AppSidebar(props) {
                           </NavLink>
                         ) : (
                           <div className="flex items-center w-full">
-                            <item.icon className="w-4 h-4 text-black group-hover:text-indigo-500" />
+                            <item.icon className="w-4 h-4 text-black" />
                             <span className="font-medium">{item.title}</span>
                             {item.items?.length > 0 && (
                               <>
@@ -258,11 +258,11 @@ export function AppSidebar(props) {
                                     to={subItem.url}
                                     className={`flex items-center gap-2 px-3 py-1 rounded-md transition-colors ${
                                       isSubActive
-                                        ? "bg-indigo-400 text-black"
-                                        : "hover:bg-blue-400 hover:text-black"
+                                        ? "bg-amber-400 text-black"
+                                        : "hover:bg-amber-400 hover:text-black"
                                     }`}
                                   >
-                                    <subItem.icon className="w-4 h-4 text-black" />
+                                    <subItem.icon className="w-4 h-4" />
                                     <span>{subItem.title}</span>
                                   </NavLink>
                                 </SidebarMenuSubButton>
