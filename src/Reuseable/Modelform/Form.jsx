@@ -1,7 +1,7 @@
-import { useState,useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Sheet,
     SheetClose,
@@ -11,103 +11,126 @@ import {
     SheetHeader,
     SheetTitle,
     SheetTrigger,
-} from "@/components/ui/sheet"
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover"
+} from "@/components/ui/sheet";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
     Command,
     CommandEmpty,
-    CommandGroup,   
+    CommandGroup,
     CommandInput,
     CommandItem,
     CommandList,
-} from "@/components/ui/command"
-import { Check, Package, Settings, Pencil } from "lucide-react"
-import { cn } from "@/lib/utils"
+} from "@/components/ui/command";
+import { Check, Package, Settings, Pencil } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useDispatch } from "react-redux";
+import { addItem, updateItem } from "../../Pages/Items/itemSlice";
 
-export default function Form( {open, onOpenChange, data}) {
+export default function Form({ open, onOpenChange, data }) {
     const isEditMode = Boolean(data);
 
-    const [name, setName] = useState("")
-    const [group, setGroup] = useState("")
-    const [type, setType] = useState("")
-    const [hsn, setHsn] = useState("")
-    const [unit, setUnit] = useState("")
-    const [status, setStatus] = useState("")
-    const [errors, setErrors] = useState({})
+    const [name, setName] = useState("");
+    const [group, setGroup] = useState("");
+    const [type, setType] = useState("");
+    const [hsn, setHsn] = useState("");
+    const [gst, setGst] = useState("");
+    const [unit, setUnit] = useState("");
+    const [status, setStatus] = useState("");
+    const [errors, setErrors] = useState({});
 
-    const groups = ["Primary"]
-    const types = ["Goods", "Services"]
-    const units = ["Pcs"]
-    const statuses = ["Active", "Inactive"]
+    const dispatch = useDispatch();
+
+    const groups = ["Primary"];
+    const types = ["Goods", "Services"];
+    const gstoptions = ["0%", "5%", "12%", "18%", "28%"];
+    const units = ["Pcs"];
+    const statuses = ["Active", "Inactive"];
 
     const validateForm = () => {
-        const newErrors = {}
-        if (!name) newErrors.name = "Name is required"
-        if (!group) newErrors.group = "Group is required"
-        if (!type) newErrors.type = "Type is required"
-        if (!hsn) newErrors.hsn = "HSN/SAC Code is required"
-        if (!unit) newErrors.unit = "Unit is required"
-        if (!status) newErrors.status = "Status is required"
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
+        const newErrors = {};
+        if (!name) newErrors.name = "Name is required";
+        if (!group) newErrors.group = "Group is required";
+        if (!type) newErrors.type = "Type is required";
+        if (!hsn) newErrors.hsn = "HSN/SAC Code is required";
+        if (!gst) newErrors.gst = "GST is required";
+        if (!unit) newErrors.unit = "Unit is required";
+        if (!status) newErrors.status = "Status is required";
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     useEffect(() => {
-        if(data){
+        if (data) {
             setName(data.name || "");
             setGroup(data.group || "");
             setType(data.type || "");
             setHsn(data.hsn || "");
+            setGst(data.gst || "");
             setUnit(data.unit || "");
             setStatus(data.status || "");
-                }
-                else
-                {
-                    setName("");
-                    setGroup("");
-                    setType("");
-                    setHsn("");
-                    setUnit("");
-                    setStatus("");
-                }
-    }, [data,open]);
-
-
-    const handleSave = () => {
-        if (validateForm()) {
-            if(isEditMode){
-                alert('✅ item submitted successfully!');
-            }
-        else{
-            alert('✅ Item created successfully!');
-            }
-            onOpenChange(false);
+        } else {
+            setName("");
+            setGroup("");
+            setType("");
+            setHsn("");
+            setGst("");
+            setUnit("");
+            setStatus("");
         }
+    }, [data, open]);
+
+    
+    const handleSave = () => {
+        if (!validateForm()) return;
+
+        const formData = {
+            id: isEditMode ? data.id : Date.now(), 
+            name,
+            group,
+            type,
+            hsn,
+            gst,
+            unit,
+            status,
+            stock: "Yes", 
+        };
+
+        if (isEditMode) {
+            dispatch(updateItem({ id: formData.id, updatedData: formData }));
+        } else {
+            dispatch(addItem(formData));
+        }
+
+        onOpenChange(false); 
     };
 
     return (
         <Sheet onOpenChange={onOpenChange} open={open}>
-            {!isEditMode&&(
-            <SheetTrigger asChild>
-                <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-500 py-2 px-4 text-white font-semibold rounded transition">
-                    <Package className="w-5 h-5" />
-                    Create New Item
-                </Button>
-            </SheetTrigger>
+            {!isEditMode && (
+                <SheetTrigger asChild>
+                    <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-500 py-2 px-4 text-white font-semibold rounded transition">
+                        <Package className="w-5 h-5" />
+                        Add Item
+                    </Button>
+                </SheetTrigger>
             )}
             <SheetContent className="sm:max-w-[480px] overflow-y-auto">
                 <SheetHeader className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            {isEditMode ?  (
+                            {isEditMode ? (
                                 <Pencil className="w-8 h-8 text-blue-700" />
-                            ):(
-                                    <Package className="w-8 h-8 text-blue-700" />
+                            ) : (
+                                <Package className="w-8 h-8 text-blue-700" />
                             )}
                             <div>
-                                <SheetTitle>{isEditMode ? "Edit items" : "create new item"}</SheetTitle>
+                                <SheetTitle>
+                                    {isEditMode ? "Edit Item" : "Create New Item"}
+                                </SheetTitle>
                                 <SheetDescription>
-                                    {isEditMode ?  "modified the details below to update the item." : "Fill in the details below to create a new item."}
+                                    {isEditMode
+                                        ? "Modify the details below to update the item."
+                                        : "Fill in the details below to create a new item."}
                                 </SheetDescription>
                             </div>
                         </div>
@@ -116,7 +139,7 @@ export default function Form( {open, onOpenChange, data}) {
                     </div>
                 </SheetHeader>
 
-
+                
                 <div className="mt-6 space-y-5">
                     <div className="grid gap-2">
                         <Label htmlFor="name">
@@ -128,10 +151,11 @@ export default function Form( {open, onOpenChange, data}) {
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
-                        {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                        {errors.name && (
+                            <p className="text-red-500 text-sm">{errors.name}</p>
+                        )}
                     </div>
 
-                    
                     <Dropdown
                         label="Item Group"
                         value={group}
@@ -140,7 +164,6 @@ export default function Form( {open, onOpenChange, data}) {
                         error={errors.group}
                     />
 
-                    
                     <Dropdown
                         label="Type"
                         value={type}
@@ -149,7 +172,6 @@ export default function Form( {open, onOpenChange, data}) {
                         error={errors.type}
                     />
 
-                    
                     <div className="grid gap-2">
                         <Label htmlFor="hsn">HSN/SAC Code</Label>
                         <Input
@@ -160,7 +182,13 @@ export default function Form( {open, onOpenChange, data}) {
                         />
                     </div>
 
-                    
+                    <Dropdown
+                        label="GST"
+                        value={gst}
+                        setValue={setGst}
+                        options={gstoptions}
+                        error={errors.gst}
+                    />
                     <Dropdown
                         label="Unit"
                         value={unit}
@@ -169,7 +197,6 @@ export default function Form( {open, onOpenChange, data}) {
                         error={errors.unit}
                     />
 
-                    
                     <Dropdown
                         label="Status"
                         value={status}
@@ -180,7 +207,10 @@ export default function Form( {open, onOpenChange, data}) {
                 </div>
 
                 <SheetFooter className="flex justify-end gap-3 mt-4">
-                    <Button onClick={handleSave} className="bg-blue-700 hover:bg-blue-500 text-white">
+                    <Button
+                        onClick={handleSave}
+                        className="bg-blue-700 hover:bg-blue-500 text-white"
+                    >
                         {isEditMode ? "💾 Update" : "✅ Save"}
                     </Button>
                     <SheetClose asChild>
@@ -189,7 +219,8 @@ export default function Form( {open, onOpenChange, data}) {
                 </SheetFooter>
             </SheetContent>
         </Sheet>
-    )
+    );
+}
 
 
 function Dropdown({ label, value, setValue, options, error }) {
@@ -212,7 +243,12 @@ function Dropdown({ label, value, setValue, options, error }) {
                             <CommandGroup>
                                 {options.map((opt) => (
                                     <CommandItem key={opt} onSelect={() => setValue(opt)}>
-                                        <Check className={cn("mr-2 h-4 w-4", value === opt ? "opacity-100" : "opacity-0")} />
+                                        <Check
+                                            className={cn(
+                                                "mr-2 h-4 w-4",
+                                                value === opt ? "opacity-100" : "opacity-0"
+                                            )}
+                                        />
                                         {opt}
                                     </CommandItem>
                                 ))}
@@ -223,6 +259,5 @@ function Dropdown({ label, value, setValue, options, error }) {
             </Popover>
             {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
-    )
-}
+    );
 }
