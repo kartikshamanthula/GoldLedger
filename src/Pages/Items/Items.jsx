@@ -1,12 +1,12 @@
 import React from 'react'
-import DemoTable from "../../Reuseable/Table/Table";
+import Table from "../../Reuseable/Table/Table";
 
 
 
 const Items = () => {
     return (
         <div className="">
-            <DemoTable />
+            <Table />
         </div>
     );
 };
