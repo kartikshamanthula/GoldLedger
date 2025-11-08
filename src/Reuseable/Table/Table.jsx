@@ -174,7 +174,7 @@ export default function Table() {
         <>
             <ReusableTable
                 columns={columns}
-                data={filteredData}
+                data={Data}
                 loading={loading}
                 pageSize={15}
                 toolbarRight={[
