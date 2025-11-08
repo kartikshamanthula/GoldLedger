@@ -2,13 +2,13 @@ import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 
 const savedItems = JSON.parse(localStorage.getItem("itemsData")) || [];
-const storedFilters = JSON.parse(localStorage.getItem("itemsFilters")) || {}; // ✅ Object, not array
+const savedFilters = JSON.parse(localStorage.getItem("itemsFilters")) || {}; // ✅ Object, not array
 
 const initialState = {
     data: savedItems,
     loading: false,
     error: null,
-    filters: storedFilters, 
+    filters: savedFilters, 
 };
 
 const itemSlice = createSlice({
