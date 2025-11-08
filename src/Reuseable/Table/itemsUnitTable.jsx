@@ -21,74 +21,38 @@ import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-import Form from "../Modelform/Form";
+import UnitForm from "../Modelform/UnitForm";
 import FilterForm from "../Filterform/FilterForm";
 import { useSelector, useDispatch } from "react-redux";
 import {
     startLoading,
-    loadItemSuccess,
-    deleteItem,
-} from "../../Pages/Items/itemSlice";
+    loadItemUnitSuccess,
+    deleteUnit,
+} from "../../Pages/Items/itemUnitSlice";
 
-export default function Table() {
+export default function UnitTable() {
     const [editData, setEditData] = React.useState(null);
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [deleteTarget, setDeleteTarget] = React.useState(null);
     const [confirmOpen, setConfirmOpen] = React.useState(false);
 
     const dispatch = useDispatch();
-    const { data, loading, filters } = useSelector((state) => state.items);
+    const { data, loading, filters } = useSelector((state) => state.itemUnit);
 
     
     React.useEffect(() => {
         dispatch(startLoading());
         setTimeout(() => {
-            const savedItems = JSON.parse(localStorage.getItem("itemsData")) || [];
-            dispatch(loadItemSuccess(savedItems));
+            const savedUnits = JSON.parse(localStorage.getItem("itemUnitData")) || [];
+            dispatch(loadItemUnitSuccess(savedUnits));
         }, 500);
     }, [dispatch]);
 
     
     const columns = React.useMemo(
         () => [
-            { accessorKey: "group", header: "Group" },
-            { accessorKey: "name", header: "Name" },
-            { accessorKey: "type", header: "Type" },
-            { accessorKey: "hsn", header: "HSN/SAC Code" },
-            { accessorKey: "gst", header: "GST" },
-            { accessorKey: "unit", header: "Unit" },
-            {
-                accessorKey: "stock",
-                header: "Want Stock",
-                cell: ({ row }) => (
-                    <span
-                        className={`px-2 py-1 text-xs font-semibold rounded-full ${row.getValue("stock") === "Yes"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-gray-100 text-gray-600"
-                            }`}
-                    >
-                        {row.getValue("stock")}
-                    </span>
-                ),
-            },
-            {
-                accessorKey: "status",
-                header: "Status",
-                cell: ({ row }) => {
-                    const status = row.getValue("status");
-                    const color =
-                        status === "Active"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700";
-                    return (
-                        <span
-                            className={`px-2 py-1 text-xs font-semibold rounded-full ${color}`}
-                        >
-                            {status}
-                        </span>
-                    );
-                },
-            },
+            { accessorKey: "name", header: "Unit Name" },
+            { accessorKey: "shortname", header: "Short Name" },
             {
                 id: "actions",
                 header: "Actions",
@@ -141,13 +105,13 @@ export default function Table() {
     
     const handleConfirmDelete = () => {
         if (deleteTarget) {
-            dispatch(deleteItem(deleteTarget.id));
+            dispatch(deleteUnit(deleteTarget.id));
             setConfirmOpen(false);
             setDeleteTarget(null);
 
-            const updatedItems =
-                data.filter((item) => item.id !== deleteTarget.id) || [];
-            localStorage.setItem("itemsData", JSON.stringify(updatedItems));
+            const updatedUnits =
+                data.filter((unit) => unit.id !== deleteTarget.id) || [];
+            localStorage.setItem("itemUnitData", JSON.stringify(updatedUnits)); // ✅ Corrected key
         }
     };
 
@@ -155,16 +119,12 @@ export default function Table() {
     const filteredData = React.useMemo(() => {
         if (!filters || Object.keys(filters).length === 0) return data;
 
-        return data.filter((item) => {
+        return data.filter((unit) => {
             return (
                 (!filters.name ||
-                    item.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
-                (!filters.group || item.group === filters.group) &&
-                (!filters.type || item.type === filters.type) &&
-                (!filters.gst || item.gst === filters.gst) &&
-                (!filters.unit || item.unit === filters.unit) &&
-                (!filters.status || item.status === filters.status) &&
-                (!filters.wantStock || item.stock === filters.wantStock)
+                    unit.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
+                (!filters.shortname ||
+                    unit.shortname?.toLowerCase().includes(filters.shortname.toLowerCase()))
             );
         });
     }, [data, filters]);
@@ -179,8 +139,8 @@ export default function Table() {
                 pageSize={15}
                 toolbarRight={[
                     <FilterForm key="filter" />,
-                    <Form
-                        key="form"
+                    <UnitForm
+                        key="unitForm"
                         open={isFormOpen}
                         onOpenChange={(open) => {
                             setIsFormOpen(open);
@@ -189,9 +149,10 @@ export default function Table() {
                         data={editData}
                     />,
                 ]}
-                emptyMessage="No items found."
+                emptyMessage="item unit not found."
             />
 
+            
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>

@@ -1,10 +1,10 @@
 import React from 'react'
-import ItemsTable from "../../Reuseable/Table/itemsTable";
+import ItemsGroupTable from "../../Reuseable/Table/itemsGroupTable";
 
 const ItemsGroups = () => {
     return (
         <div className="">
-            <ItemsTable />
+            <ItemsGroupTable />
         </div>
     );
 };
