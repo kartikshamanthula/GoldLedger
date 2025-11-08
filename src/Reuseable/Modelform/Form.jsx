@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/command";
 import { Check, Package, Settings, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addItem, updateItem } from "../../Pages/Items/itemSlice";
 
 export default function Form({ open, onOpenChange, data }) {
@@ -35,15 +35,19 @@ export default function Form({ open, onOpenChange, data }) {
     const [hsn, setHsn] = useState("");
     const [gst, setGst] = useState("");
     const [unit, setUnit] = useState("");
+    const [quantity, setQuantity] = useState("")
+    const [stock, setStock] = useState("");
     const [status, setStatus] = useState("");
     const [errors, setErrors] = useState({});
+    const [photo, setPhoto] = useState(null);
 
     const dispatch = useDispatch();
 
-    const groups = ["Primary"];
+    const itemGroups = useSelector((state) => state.itemGroup.data);
     const types = ["Goods", "Services"];
     const gstoptions = ["0%", "5%", "12%", "18%", "28%"];
-    const units = ["Pcs"];
+    const itemUnits = useSelector((state) => state.itemUnit.data);
+    const stockoptions = ["Yes", "No"];
     const statuses = ["Active", "Inactive"];
 
     const validateForm = () => {
@@ -54,6 +58,8 @@ export default function Form({ open, onOpenChange, data }) {
         if (!hsn) newErrors.hsn = "HSN/SAC Code is required";
         if (!gst) newErrors.gst = "GST is required";
         if (!unit) newErrors.unit = "Unit is required";
+        if (!stock) newErrors.stock = "Stock is required";
+        if (!quantity) newErrors.quantity = "Quantity is required";
         if (!status) newErrors.status = "Status is required";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -67,6 +73,8 @@ export default function Form({ open, onOpenChange, data }) {
             setHsn(data.hsn || "");
             setGst(data.gst || "");
             setUnit(data.unit || "");
+            setQuantity(data.quantity || "");
+            setStock(data.stock || "");
             setStatus(data.status || "");
         } else {
             setName("");
@@ -75,24 +83,27 @@ export default function Form({ open, onOpenChange, data }) {
             setHsn("");
             setGst("");
             setUnit("");
+            setQuantity("");
+            setStock("");
             setStatus("");
         }
     }, [data, open]);
 
-    
+
     const handleSave = () => {
         if (!validateForm()) return;
 
         const formData = {
-            id: isEditMode ? data.id : Date.now(), 
+            id: isEditMode ? data.id : Date.now(),
             name,
             group,
             type,
             hsn,
             gst,
             unit,
+            quantity,
+            stock,
             status,
-            stock: "Yes", 
         };
 
         if (isEditMode) {
@@ -101,7 +112,7 @@ export default function Form({ open, onOpenChange, data }) {
             dispatch(addItem(formData));
         }
 
-        onOpenChange(false); 
+        onOpenChange(false);
     };
 
     return (
@@ -139,7 +150,7 @@ export default function Form({ open, onOpenChange, data }) {
                     </div>
                 </SheetHeader>
 
-                
+
                 <div className="mt-6 space-y-5">
                     <div className="grid gap-2">
                         <Label htmlFor="name">
@@ -160,7 +171,7 @@ export default function Form({ open, onOpenChange, data }) {
                         label="Item Group"
                         value={group}
                         setValue={setGroup}
-                        options={groups}
+                        options={itemGroups}
                         error={errors.group}
                     />
 
@@ -172,6 +183,65 @@ export default function Form({ open, onOpenChange, data }) {
                         error={errors.type}
                     />
 
+                    {type === "Goods" && (
+                        <div className="grid gap-2">
+                            <Label htmlFor="photo">Photo</Label>
+                            <input
+                                id="dropzone-file"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file) {
+                                        setPhoto(URL.createObjectURL(file));
+                                    }
+                                }}
+                            />
+                            <label
+                                htmlFor="dropzone-file"
+                                className="flex flex-col items-center justify-center w-80 h-70 max-w-lg p-5 mx-auto mt-2 text-center
+                                bg-white border-2 border-gray-300 border-dashed cursor-pointer rounded relative overflow-hidden"
+                            >
+                                {photo ? (
+                                    <>
+                                        
+                                        <img
+                                            src={photo}
+                                            alt="Preview"
+                                            className="absolute inset-0 w-full h-100 p-10 m-auto object-cover rounded"
+                                        />
+                                        
+                                        <div className="absolute inset-0 bg-opacity-30 flex flex-col justify-center items-center  opacity-0 hover:opacity-100 transition-opacity duration-200">
+                                            <p className="text-sm"></p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                    
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth="1.5"
+                                            stroke="currentColor"
+                                            className="w-8 h-8 text-gray-500"
+                                        >
+                                            <path
+                                                strokeLinecap="square"
+                                                strokeLinejoin="square"
+                                                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 
+                5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 
+                0118 19.5H6.75z"
+                                            />
+                                        </svg>
+                                        <p className="mt-2 text-sm text-gray-500">Click to upload or drag & drop</p>
+                                        <p className="text-xs text-gray-400">image/* up to 2MB</p>
+                                    </>
+                                )}
+                            </label>
+                        </div>
+                    )}
                     <div className="grid gap-2">
                         <Label htmlFor="hsn">HSN/SAC Code</Label>
                         <Input
@@ -193,9 +263,38 @@ export default function Form({ open, onOpenChange, data }) {
                         label="Unit"
                         value={unit}
                         setValue={setUnit}
-                        options={units}
+                        options={itemUnits}
                         error={errors.unit}
                     />
+
+                    {type === "Goods" && (
+                        <>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="quantity">
+                                    Minimum Quantity <span className="text-red-500">*</span>
+                                </Label>
+                                <Input
+                                    id="quantity"
+                                    placeholder="Enter minimum quantity"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(e.target.value)}
+                                />
+                                {errors.quantity && (
+                                    <p className="text-red-500 text-sm">{errors.quantity}</p>
+                                )}
+                            </div>
+
+                            <Dropdown
+                                label="Want Stock"
+                                value={stock}
+                                setValue={setStock}
+                                options={stockoptions}
+                                error={errors.stock}
+                            />
+
+                        </>
+                    )}
 
                     <Dropdown
                         label="Status"
@@ -205,7 +304,6 @@ export default function Form({ open, onOpenChange, data }) {
                         error={errors.status}
                     />
                 </div>
-
                 <SheetFooter className="flex justify-end gap-3 mt-4">
                     <Button
                         onClick={handleSave}
@@ -223,13 +321,14 @@ export default function Form({ open, onOpenChange, data }) {
 }
 
 
-function Dropdown({ label, value, setValue, options, error }) {
+function Dropdown({ label, value, setValue, options = [], error }) {
+    const [open, setOpen] = useState(false)
     return (
         <div className="grid gap-2">
             <Label>
                 {label} <span className="text-red-500">*</span>
             </Label>
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-between">
                         {value || `Select ${label}`}
@@ -241,17 +340,30 @@ function Dropdown({ label, value, setValue, options, error }) {
                         <CommandList>
                             <CommandEmpty>No result found.</CommandEmpty>
                             <CommandGroup>
-                                {options.map((opt) => (
-                                    <CommandItem key={opt} onSelect={() => setValue(opt)}>
-                                        <Check
-                                            className={cn(
-                                                "mr-2 h-4 w-4",
-                                                value === opt ? "opacity-100" : "opacity-0"
-                                            )}
-                                        />
-                                        {opt}
-                                    </CommandItem>
-                                ))}
+                                {options.map((opt, index) => {
+                                    const key = opt?.id || `${opt}-${index}`;
+                                    const displayValue = opt?.name || opt;
+                                    const selected = value === displayValue;
+
+                                    return (
+                                        <CommandItem
+                                            key={key}
+                                            onSelect={() => {
+                                                setValue(displayValue)
+                                                setOpen(false);
+                                            }}
+                                            className="cursor-pointer"
+                                        >
+                                            <Check
+                                                className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    selected ? "opacity-100" : "opacity-0"
+                                                )}
+                                            />
+                                            {displayValue}
+                                        </CommandItem>
+                                    );
+                                })}
                             </CommandGroup>
                         </CommandList>
                     </Command>
