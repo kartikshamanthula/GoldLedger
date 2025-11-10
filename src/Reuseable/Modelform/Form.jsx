@@ -21,10 +21,13 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
-import { Check, Package, Settings, Pencil } from "lucide-react";
+import { Check, Package, Settings, Pencil, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useDispatch, useSelector } from "react-redux";
 import { addItem, updateItem } from "../../Pages/Items/itemSlice";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogClose, DialogDescription } from "@/components/ui/dialog";
+
 
 export default function Form({ open, onOpenChange, data }) {
     const isEditMode = Boolean(data);
@@ -198,27 +201,13 @@ export default function Form({ open, onOpenChange, data }) {
                                     }
                                 }}
                             />
-                            <label
+                            
+                                {!photo ? (
+                                    <label
                                 htmlFor="dropzone-file"
-                                className="flex flex-col items-center justify-center w-80 h-70 max-w-lg p-5 mx-auto mt-2 text-center
-                                bg-white border-2 border-gray-300 border-dashed cursor-pointer rounded relative overflow-hidden"
+                                className="flex flex-col items-center justify-center w-80 h-80 max-w-lg p-5 mx-auto mt-2 text-center bg-white 
+                                border-2 border-gray-300 border-dashed cursor-pointer rounded relative overflow-hidden"
                             >
-                                {photo ? (
-                                    <>
-                                        
-                                        <img
-                                            src={photo}
-                                            alt="Preview"
-                                            className="absolute inset-0 w-full h-100 p-10 m-auto object-cover rounded"
-                                        />
-                                        
-                                        <div className="absolute inset-0 bg-opacity-30 flex flex-col justify-center items-center  opacity-0 hover:opacity-100 transition-opacity duration-200">
-                                            <p className="text-sm"></p>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                    
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             fill="none"
@@ -231,17 +220,54 @@ export default function Form({ open, onOpenChange, data }) {
                                                 strokeLinecap="square"
                                                 strokeLinejoin="square"
                                                 d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 
-                5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 
-                0118 19.5H6.75z"
+                                                5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 
+                                                0118 19.5H6.75z"
                                             />
                                         </svg>
                                         <p className="mt-2 text-sm text-gray-500">Click to upload or drag & drop</p>
                                         <p className="text-xs text-gray-400">image/* up to 2MB</p>
-                                    </>
+                            </label>    
+                                ) : (
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <div className="relative w-80 h-80 max-w-lg mx-auto cursor-pointer group overflow-hidden border
+                                            border-white text-white">
+                                                <img
+                                                    src={photo}
+                                                    alt="Preview"
+                                                    className="absolute inset-0 w-full h-full object-cover rounded transition-transform duration-200 
+                                                    group-hover:scale-105"
+                                                />
+                                                <Button
+                                                    size="icon"
+                                                    variant="secondary"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setPhoto(null);
+                                                    }}
+                                                    className="absolute top-2 right-2 z-10 h-7 w-7 rounded-full bg-black shadow hover:bg-black
+                                                    transition"
+                                                >
+                                                    <X className="h-5 w-5 text-white" />
+                                                </Button>
+                                                <div className="absolute inset-0 bg-opacity-0 group-hover:bg-opacity-20 transition" />
+                                            </div>
+                                        </DialogTrigger>
+                                                    
+                                        <DialogContent className="max-w-3xl p-0 bg-transparent border-none shadow-none flex items-center 
+                                        justify-center">
+                                            
+                                            <img
+                                                src={photo}
+                                                alt="Full preview"
+                                                className="rounded-lg object-contain max-h-[80vh]"
+                                            />
+                                        </DialogContent>
+                                    </Dialog>
                                 )}
-                            </label>
                         </div>
                     )}
+
                     <div className="grid gap-2">
                         <Label htmlFor="hsn">HSN/SAC Code</Label>
                         <Input
