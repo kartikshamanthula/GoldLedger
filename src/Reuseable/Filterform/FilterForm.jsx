@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -9,6 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,7 +33,7 @@ import { setFilters, clearFilters } from "../../Pages/Items/itemSlice";
 export function FilterForm() {
     const dispatch = useDispatch();
 
-    const [open, setOpen] = useState(false); // ✅ dialog open state
+    const [open, setOpen] = useState(false);
     const [group, setGroup] = useState("");
     const [type, setType] = useState("");
     const [gst, setGst] = useState("");
@@ -41,22 +42,33 @@ export function FilterForm() {
     const [wantStock, setWantStock] = useState("");
     const [name, setName] = useState("");
 
-    const groups = ["Primary"];
+    const itemGroups = useSelector((state) => state.itemGroup.data);
     const types = ["Goods", "Service"];
     const gstRates = ["0%", "5%", "12%", "18%", "28%"];
-    const unitOptions = ["pcs"];
+    const itemUnits = useSelector((state) => state.itemUnit.data);
     const statusOptions = ["Active", "Inactive"];
     const wantStockOptions = ["Yes", "No"];
 
-    // 🧠 Apply Filter
+
     const handleApply = (e) => {
         e.preventDefault();
-        const filterData = { name, group, type, gst, unit, status, wantStock };
-        dispatch(setFilters(filterData)); // ✅ Store filters in Redux
-        setOpen(false); // ✅ Close dialog
+
+        const filterData = {
+            name: name?.trim() || "",
+            group: typeof group === "object" ? group.name : group,
+            type: type || "",
+            gst: gst || "",
+            unit: typeof unit === "object" ? unit.name : unit,
+            status: status || "",
+            wantStock: wantStock || "",
+        };
+
+        dispatch(setFilters(filterData));
+        setOpen(false);
     };
 
-    // 🧹 Clear Filter
+
+
     const handleClear = () => {
         dispatch(clearFilters());
         setGroup("");
@@ -66,7 +78,7 @@ export function FilterForm() {
         setStatus("");
         setWantStock("");
         setName("");
-        setOpen(false); // ✅ also close dialog
+        setOpen(false);
     };
 
     return (
@@ -81,10 +93,14 @@ export function FilterForm() {
             <DialogContent className="sm:max-w-[600px]">
                 <DialogHeader>
                     <DialogTitle>Item Filter</DialogTitle>
+                    <DialogDescription>
+                        Select your desired filters and click <strong>Apply</strong> to refine the item list.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <form className="space-y-5" onSubmit={handleApply}>
-                    {/* Name */}
+
+                    {/* Name Field */}
                     <div className="grid gap-2">
                         <Label htmlFor="name">Name</Label>
                         <Input
@@ -97,14 +113,14 @@ export function FilterForm() {
 
                     {/* Row 1 */}
                     <div className="grid grid-cols-2 gap-4">
-                        <Dropdown label="Group" value={group} setValue={setGroup} options={groups} />
+                        <Dropdown label="Group" value={group} setValue={setGroup} options={itemGroups} />
                         <Dropdown label="Type" value={type} setValue={setType} options={types} />
                     </div>
 
                     {/* Row 2 */}
                     <div className="grid grid-cols-2 gap-4">
                         <Dropdown label="GST Rate" value={gst} setValue={setGst} options={gstRates} />
-                        <Dropdown label="Unit" value={unit} setValue={setUnit} options={unitOptions} />
+                        <Dropdown label="Unit" value={unit} setValue={setUnit} options={itemUnits} />
                     </div>
 
                     {/* Row 3 */}
@@ -136,16 +152,17 @@ export function FilterForm() {
                     </DialogFooter>
                 </form>
             </DialogContent>
+
         </Dialog>
     );
 }
 
-// ✅ Reusable Dropdown Component
-function Dropdown({ label, value, setValue, options }) {
+function Dropdown({ label, value, setValue, options = [] }) {
+    const [open, setOpen] = useState(false)
     return (
         <div className="grid gap-2">
             <Label>{label}</Label>
-            <Popover>
+            <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button variant="outline" className="w-full justify-between">
                         {value || `Select ${label.toLowerCase()}`}
@@ -157,17 +174,30 @@ function Dropdown({ label, value, setValue, options }) {
                         <CommandList>
                             <CommandEmpty>No result found.</CommandEmpty>
                             <CommandGroup>
-                                {options.map((opt) => (
-                                    <CommandItem key={opt} onSelect={() => setValue(opt)}>
-                                        <Check
-                                            className={cn(
-                                                "mr-2 h-4 w-4",
-                                                value === opt ? "opacity-100" : "opacity-0"
-                                            )}
-                                        />
-                                        {opt}
-                                    </CommandItem>
-                                ))}
+                                {options.map((opt, index) => {
+                                    const key = opt.id || `${opt}-${index}`;
+                                    const displayValue = opt.name || opt;
+                                    const isSelected = value === displayValue;
+
+                                    return (
+                                        <CommandItem
+                                            key={key}
+                                            onSelect={() => {
+                                                setValue(displayValue);
+                                                setOpen(false);
+                                            }}
+                                            className="cursor-pointer"
+                                        >
+                                            <Check
+                                                className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    isSelected ? "opacity-100" : "opacity-0"
+                                                )}
+                                            />
+                                            {displayValue}
+                                        </CommandItem>
+                                    );
+                                })}
                             </CommandGroup>
                         </CommandList>
                     </Command>
@@ -176,5 +206,6 @@ function Dropdown({ label, value, setValue, options }) {
         </div>
     );
 }
+
 
 export default FilterForm;

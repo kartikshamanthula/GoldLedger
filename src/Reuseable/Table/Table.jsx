@@ -20,7 +20,7 @@ import {
     AlertDialogCancel,
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Plus } from "lucide-react";
 import Form from "../Modelform/Form";
 import FilterForm from "../Filterform/FilterForm";
 import { useSelector, useDispatch } from "react-redux";
@@ -39,7 +39,7 @@ export default function Table() {
     const dispatch = useDispatch();
     const { data, loading, filters } = useSelector((state) => state.items);
 
-    
+
     React.useEffect(() => {
         dispatch(startLoading());
         setTimeout(() => {
@@ -48,7 +48,7 @@ export default function Table() {
         }, 500);
     }, [dispatch]);
 
-    
+
     const columns = React.useMemo(
         () => [
             { accessorKey: "group", header: "Group" },
@@ -138,7 +138,7 @@ export default function Table() {
         []
     );
 
-    
+
     const handleConfirmDelete = () => {
         if (deleteTarget) {
             dispatch(deleteItem(deleteTarget.id));
@@ -151,7 +151,7 @@ export default function Table() {
         }
     };
 
-    
+
     const filteredData = React.useMemo(() => {
         if (!filters || Object.keys(filters).length === 0) return data;
 
@@ -169,29 +169,37 @@ export default function Table() {
         });
     }, [data, filters]);
 
-    
     return (
         <>
             <ReusableTable
                 columns={columns}
-                data={filteredData}
+                data={Data}
                 loading={loading}
                 pageSize={15}
                 toolbarRight={[
                     <FilterForm key="filter" />,
-                    <Form
-                        key="form"
-                        open={isFormOpen}
-                        onOpenChange={(open) => {
-                            setIsFormOpen(open);
-                            if (!open) setEditData(null);
+                    <Button
+                        key="addItem"
+                        className="bg-blue-700 hover:bg-blue-500 text-white"
+                        onClick={() => {
+                            setEditData(null);
+                            setIsFormOpen(true);
                         }}
-                        data={editData}
-                    />,
+                    >
+                        <Plus className="w-4 h-4 mr-2" /> Add Item
+                    </Button>,
                 ]}
                 emptyMessage="No items found."
             />
 
+            <Form
+                open={isFormOpen}
+                onOpenChange={(open) => {
+                    setIsFormOpen(open);
+                    if (!open) setEditData(null);
+                }}
+                data={editData}
+            />
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>

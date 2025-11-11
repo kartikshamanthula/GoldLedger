@@ -10,7 +10,6 @@ import {
     SheetFooter,
     SheetHeader,
     SheetTitle,
-    SheetTrigger,
 } from "@/components/ui/sheet";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
@@ -31,6 +30,7 @@ import { Dialog, DialogContent, DialogTrigger, DialogTitle, DialogClose, DialogD
 
 export default function Form({ open, onOpenChange, data }) {
     const isEditMode = Boolean(data);
+    const dispatch = useDispatch();
 
     const [name, setName] = useState("");
     const [group, setGroup] = useState("");
@@ -38,20 +38,27 @@ export default function Form({ open, onOpenChange, data }) {
     const [hsn, setHsn] = useState("");
     const [gst, setGst] = useState("");
     const [unit, setUnit] = useState("");
-    const [quantity, setQuantity] = useState("")
+    const [quantity, setQuantity] = useState("");
     const [stock, setStock] = useState("");
     const [status, setStatus] = useState("");
     const [errors, setErrors] = useState({});
     const [photo, setPhoto] = useState(null);
 
-    const dispatch = useDispatch();
-
     const itemGroups = useSelector((state) => state.itemGroup.data);
+    const itemUnits = useSelector((state) => state.itemUnit.data);
     const types = ["Goods", "Services"];
     const gstoptions = ["0%", "5%", "12%", "18%", "28%"];
-    const itemUnits = useSelector((state) => state.itemUnit.data);
     const stockoptions = ["Yes", "No"];
     const statuses = ["Active", "Inactive"];
+
+    const convertToBase64 = (file) =>
+        new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = (error) => reject(error);
+        });
+
 
     const validateForm = () => {
         const newErrors = {};
@@ -61,12 +68,13 @@ export default function Form({ open, onOpenChange, data }) {
         if (!hsn) newErrors.hsn = "HSN/SAC Code is required";
         if (!gst) newErrors.gst = "GST is required";
         if (!unit) newErrors.unit = "Unit is required";
-        if (!stock) newErrors.stock = "Stock is required";
-        if (!quantity) newErrors.quantity = "Quantity is required";
+        if (type === "Goods" && !stock) newErrors.stock = "Stock is required";
+        if (type === "Goods" && !quantity) newErrors.quantity = "Quantity is required";
         if (!status) newErrors.status = "Status is required";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
 
     useEffect(() => {
         if (data) {
@@ -79,6 +87,7 @@ export default function Form({ open, onOpenChange, data }) {
             setQuantity(data.quantity || "");
             setStock(data.stock || "");
             setStatus(data.status || "");
+            setPhoto(data.photo || null);
         } else {
             setName("");
             setGroup("");
@@ -89,8 +98,19 @@ export default function Form({ open, onOpenChange, data }) {
             setQuantity("");
             setStock("");
             setStatus("");
+            setPhoto(null);
         }
     }, [data, open]);
+
+
+    useEffect(() => {
+        if (type === "Services") {
+            setStock("Yes");
+        } else if (type === "Goods") {
+            setStock("");
+        }
+    }, [type]);
+
 
 
     const handleSave = () => {
@@ -99,18 +119,19 @@ export default function Form({ open, onOpenChange, data }) {
         const formData = {
             id: isEditMode ? data.id : Date.now(),
             name,
-            group,
+            group: typeof group === "object" ? group.name : group,
             type,
             hsn,
             gst,
-            unit,
+            unit: typeof unit === "object" ? unit.name : unit,
             quantity,
             stock,
             status,
+            photo,
         };
 
         if (isEditMode) {
-            dispatch(updateItem({ id: formData.id, updatedData: formData }));
+            dispatch(updateItem({ id: data.id, updatedData: formData }));
         } else {
             dispatch(addItem(formData));
         }
@@ -120,16 +141,8 @@ export default function Form({ open, onOpenChange, data }) {
 
     return (
         <Sheet onOpenChange={onOpenChange} open={open}>
-            {!isEditMode && (
-                <SheetTrigger asChild>
-                    <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-500 py-2 px-4 text-white font-semibold rounded transition">
-                        <Package className="w-5 h-5" />
-                        Add Item
-                    </Button>
-                </SheetTrigger>
-            )}
             <SheetContent className="sm:max-w-[480px] overflow-y-auto">
-                <SheetHeader className="flex flex-col gap-1">
+                <SheetHeader>
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
                             {isEditMode ? (
@@ -148,27 +161,18 @@ export default function Form({ open, onOpenChange, data }) {
                                 </SheetDescription>
                             </div>
                         </div>
-
                         <Settings className="w-5 h-5 text-black mt-7 cursor-pointer" />
                     </div>
                 </SheetHeader>
 
-
                 <div className="mt-6 space-y-5">
-                    <div className="grid gap-2">
-                        <Label htmlFor="name">
-                            Name <span className="text-red-500">*</span>
-                        </Label>
-                        <Input
-                            id="name"
-                            placeholder="Enter item name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                        {errors.name && (
-                            <p className="text-red-500 text-sm">{errors.name}</p>
-                        )}
-                    </div>
+                    <TextField
+                        id="name"
+                        label="Name"
+                        value={name}
+                        onChange={setName}
+                        error={errors.name}
+                    />
 
                     <Dropdown
                         label="Item Group"
@@ -277,7 +281,70 @@ export default function Form({ open, onOpenChange, data }) {
                             onChange={(e) => setHsn(e.target.value)}
                         />
                     </div>
+                        <>
 
+                            <div className="grid gap-2">
+                                <Label htmlFor="photo">Photo</Label>
+                                <input
+                                    id="dropzone-file"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={async (e) => {
+                                        const file = e.target.files[0];
+                                        if (file) {
+                                            const base64 = await convertToBase64(file);
+                                            setPhoto(base64);
+                                        }
+                                    }}
+                                />
+                                <label
+                                    htmlFor="dropzone-file"
+                                    className="flex flex-col items-center justify-center w-80 h-70 max-w-lg p-5 mx-auto mt-2 text-center
+                                    bg-white border-2 border-gray-300 border-dashed cursor-pointer rounded relative overflow-hidden"
+                                >
+                                    {photo ? (
+                                        <img
+                                            src={photo}
+                                            alt="Preview"
+                                            className="absolute inset-0 w-full h-full object-cover rounded"
+                                        />
+                                    ) : (
+                                        <>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                strokeWidth="1.5"
+                                                stroke="currentColor"
+                                                className="w-8 h-8 text-gray-500"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775
+                                                    5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0
+                                                    0118 19.5H6.75z"
+                                                />
+                                            </svg>
+                                            <p className="mt-2 text-sm text-gray-500">
+                                                Click to upload or drag & drop
+                                            </p>
+                                            <p className="text-xs text-gray-400">image/* up to 2MB</p>
+                                        </>
+                                    )}
+                                </label>
+                            </div>
+                        </>
+                    )}
+
+                    <TextField
+                        id="hsn"
+                        label="HSN/SAC Code"
+                        value={hsn}
+                        onChange={setHsn}
+                        error={errors.hsn}
+                    />
                     <Dropdown
                         label="GST"
                         value={gst}
@@ -285,6 +352,34 @@ export default function Form({ open, onOpenChange, data }) {
                         options={gstoptions}
                         error={errors.gst}
                     />
+
+                    {type === "Goods" && (
+                        <>
+                            <TextField
+                                id="quantity"
+                                label="Minimum Quantity"
+                                value={quantity}
+                                onChange={setQuantity}
+                                error={errors.quantity}
+                            />
+                            {type === "Goods" ? (
+                                <Dropdown
+                                    label="Want Stock"
+                                    value={stock}
+                                    setValue={setStock}
+                                    options={stockoptions}
+                                    error={errors.stock}
+                                />
+                            ) : (
+                                <div className="grid gap-2">
+                                    <Label>Want Stock</Label>
+                                    <Input value="Yes" disabled className="bg-gray-100 text-gray-600" />
+                                </div>
+                            )}
+                        </>
+                    )}
+
+
                     <Dropdown
                         label="Unit"
                         value={unit}
@@ -292,36 +387,6 @@ export default function Form({ open, onOpenChange, data }) {
                         options={itemUnits}
                         error={errors.unit}
                     />
-
-                    {type === "Goods" && (
-                        <>
-
-                            <div className="grid gap-2">
-                                <Label htmlFor="quantity">
-                                    Minimum Quantity <span className="text-red-500">*</span>
-                                </Label>
-                                <Input
-                                    id="quantity"
-                                    placeholder="Enter minimum quantity"
-                                    value={quantity}
-                                    onChange={(e) => setQuantity(e.target.value)}
-                                />
-                                {errors.quantity && (
-                                    <p className="text-red-500 text-sm">{errors.quantity}</p>
-                                )}
-                            </div>
-
-                            <Dropdown
-                                label="Want Stock"
-                                value={stock}
-                                setValue={setStock}
-                                options={stockoptions}
-                                error={errors.stock}
-                            />
-
-                        </>
-                    )}
-
                     <Dropdown
                         label="Status"
                         value={status}
@@ -330,6 +395,7 @@ export default function Form({ open, onOpenChange, data }) {
                         error={errors.status}
                     />
                 </div>
+
                 <SheetFooter className="flex justify-end gap-3 mt-4">
                     <Button
                         onClick={handleSave}
@@ -346,9 +412,26 @@ export default function Form({ open, onOpenChange, data }) {
     );
 }
 
+/* 🔹 Reusable Components */
+function TextField({ id, label, value, onChange, error }) {
+    return (
+        <div className="grid gap-2">
+            <Label htmlFor={id}>
+                {label} <span className="text-red-500">*</span>
+            </Label>
+            <Input
+                id={id}
+                placeholder={`Enter ${label.toLowerCase()}`}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+            />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+        </div>
+    );
+}
 
 function Dropdown({ label, value, setValue, options = [], error }) {
-    const [open, setOpen] = useState(false)
+    const [open, setOpen] = useState(false);
     return (
         <div className="grid gap-2">
             <Label>
@@ -367,18 +450,15 @@ function Dropdown({ label, value, setValue, options = [], error }) {
                             <CommandEmpty>No result found.</CommandEmpty>
                             <CommandGroup>
                                 {options.map((opt, index) => {
-                                    const key = opt?.id || `${opt}-${index}`;
                                     const displayValue = opt?.name || opt;
                                     const selected = value === displayValue;
-
                                     return (
                                         <CommandItem
-                                            key={key}
+                                            key={index}
                                             onSelect={() => {
-                                                setValue(displayValue)
+                                                setValue(displayValue);
                                                 setOpen(false);
                                             }}
-                                            className="cursor-pointer"
                                         >
                                             <Check
                                                 className={cn(
