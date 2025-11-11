@@ -21,38 +21,42 @@ import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-import UnitForm from "../Modelform/UnitForm";
+import ColorForm from "../Modelform/ColorForm";
 import FilterForm from "../Filterform/FilterForm";
 import { useSelector, useDispatch } from "react-redux";
 import {
     startLoading,
-    loadItemUnitSuccess,
-    deleteUnit,
-} from "../../Pages/Items/itemUnitSlice";
+    loaditemcolorSuccess,
+    deleteColor,
+} from "../../Pages/Items/itemColorSlice";
 
-export default function UnitTable() {
+export default function ColorTable() {
     const [editData, setEditData] = React.useState(null);
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [deleteTarget, setDeleteTarget] = React.useState(null);
     const [confirmOpen, setConfirmOpen] = React.useState(false);
 
     const dispatch = useDispatch();
-    const { data, loading, filters } = useSelector((state) => state.itemUnit);
+    const { data, loading, filters } = useSelector((state) => state.itemColor);
 
-    
+
     React.useEffect(() => {
         dispatch(startLoading());
         setTimeout(() => {
-            const savedUnits = JSON.parse(localStorage.getItem("itemUnitData")) || [];
-            dispatch(loadItemUnitSuccess(savedUnits));
+            const savedColors = JSON.parse(localStorage.getItem("itemcolorData")) || [];
+            dispatch(loaditemcolorSuccess(savedColors));
         }, 500);
     }, [dispatch]);
 
-    
+
     const columns = React.useMemo(
         () => [
-            { accessorKey: "name", header: "Unit Name" },
-            { accessorKey: "shortname", header: "Short Name" },
+            { accessorKey: "name", header: "Name" },
+            { accessorKey: "realtouch", header: "Real Touch", 
+                cell : ({row}) => (
+                    <span>{parseFloat(row.original.realtouch || 0).toFixed(2)}</span>
+                )
+            },
             {
                 id: "actions",
                 header: "Actions",
@@ -102,35 +106,34 @@ export default function UnitTable() {
         []
     );
 
-    
+
     const handleConfirmDelete = () => {
-        console.log(deleteTarget);
         if (deleteTarget) {
-            dispatch(deleteUnit(deleteTarget.id));
+            dispatch(deleteColor(deleteTarget.id));
             setConfirmOpen(false);
             setDeleteTarget(null);
 
             const updatedUnits =
-                data.filter((unit) => unit.id !== deleteTarget.id) || [];
-            localStorage.setItem("itemUnitData", JSON.stringify(updatedUnits));
+                data.filter((color) => color.id !== deleteTarget.id) || [];
+            localStorage.setItem("itemcolorData", JSON.stringify(updatedColor));
         }
     };
 
-    
+
     const filteredData = React.useMemo(() => {
         if (!filters || Object.keys(filters).length === 0) return data;
 
-        return data.filter((unit) => {
+        return data.filter((color) => {
             return (
                 (!filters.name ||
-                    unit.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
-                (!filters.shortname ||
-                    unit.shortname?.toLowerCase().includes(filters.shortname.toLowerCase()))
+                    color.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
+                (!filters.realtouch ||
+                    color.realtouch?.toLowerCase().includes(filters.realtouch.toLowerCase()))
             );
         });
     }, [data, filters]);
 
-    
+
     return (
         <>
             <ReusableTable
@@ -140,8 +143,8 @@ export default function UnitTable() {
                 pageSize={15}
                 toolbarRight={[
                     <FilterForm key="filter" />,
-                    <UnitForm
-                        key="unitForm"
+                    <ColorForm
+                        key="colorForm"
                         open={isFormOpen}
                         onOpenChange={(open) => {
                             setIsFormOpen(open);
@@ -150,10 +153,10 @@ export default function UnitTable() {
                         data={editData}
                     />,
                 ]}
-                emptyMessage="item unit not found."
+                emptyMessage="touch not found."
             />
 
-            
+
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>

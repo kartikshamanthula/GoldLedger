@@ -36,6 +36,13 @@ import {
   Percent,
   FileSpreadsheet,
   PieChart,
+  Store,
+  Palette,
+  ReceiptIndianRupee,
+  ShoppingBag,
+  Shredder,
+  Tag,
+
 } from "lucide-react";
 
 import {
@@ -91,10 +98,7 @@ export function SiteHeader() {
     { name: "Items groups", path: "/items-groups" },
     { name: "Items units", path: "/Items-Units" },
     { name: "Years", path: "/years" },
-    { name: "Estimate", path: "/estimate" },
-    { name: "Jobwork", path: "/jobwork" },
     { name: "Order", path: "/order" },
-    { name: "Quotations", path: "/quotations" },
     { name: "Payments", path: "/payments" },
     { name: "Receipts", path: "/receipts" },
     { name: "Ledgers", path: "/ledgers" },
@@ -127,15 +131,20 @@ export function SiteHeader() {
       title: "Item Units",
       subtitle: "Define measurement units for your items",
     },
+    "/items-colors": {
+      icon: Palette,
+      title: "Item Colors",
+      subtitle: "Define colors for your items",
+    },
+    "/items-designs": {
+      icon: Palette,
+      title: "Item Designs",
+      subtitle: "Define designs for your items",
+    },
     "/years": {
       icon: Calendar,
       title: "Years",
       subtitle: "Manage fiscal years and reports",
-    },
-    "/estimate": {
-      icon: FileText,
-      title: "Estimate",
-      subtitle: "Create and manage estimates",
     },
     "/sales": {
       icon: ShoppingCart,
@@ -182,31 +191,20 @@ export function SiteHeader() {
       title: "Opening Balance",
       subtitle: "Record and manage opening balances",
     },
-
-    "/materialin": {
-      icon: FileText,
-      title: "Material In",
-      subtitle: "Record and manage materialin vouchers",
+    "/ordertypes": {
+      icon: Layers,
+      title: "Order Types",
+      subtitle: "Manage and view all order types",
     },
-    "/materialout": {
-      icon: FileText,
-      title: "Material Out",
-      subtitle: "Record and manage materialout vouchers",
+    "/ordercustomer": {
+      icon: ReceiptIndianRupee,
+      title: "Order Customer",
+      subtitle: "Manage and view all order customer",
     },
-    "/orderpurchase": {
-      icon: ShoppingCart,
-      title: "Order Purchase",
-      subtitle: "Record and manage order purchase vouchers",
-    },
-    "/ordersales": {
-      icon: ShoppingCart,
-      title: "Order Sales",
-      subtitle: "Record and manage order sales vouchers",
-    },
-    "/quotations": {
-      icon: FileText,
-      title: "Quotations",
-      subtitle: "Manage and view all quotations",
+    "/ordersupplier": {
+      icon: ShoppingBag,
+      title: "Order Supplier",
+      subtitle: "Manage and view all order supplier",
     },
     "/payments": {
       icon: CreditCard,
@@ -217,6 +215,11 @@ export function SiteHeader() {
       icon: Receipt,
       title: "Receipts",
       subtitle: "Track customer receipts and incoming payments",
+    },
+    "/ratecut": {
+      icon: Shredder,
+      title: "Rate Cut",
+      subtitle: "Manage and view all rate cuts",
     },
     "/ledgers": {
       icon: Users,
@@ -273,6 +276,21 @@ export function SiteHeader() {
       title: "Voucher",
       subtitle: "Manage and view voucher reports",
     },
+    "/ordersummary": {
+      icon: FileText,
+      title: "Order Summary",
+      subtitle: "Generate and view order summary reports",
+    },
+    "/tagreport": {
+      icon: Tag,
+      title: "Tag Report",
+      subtitle: "Generate and view tag reports",
+    },
+    "/tagverify": {
+      icon: Tag,
+      title: "Tag Verify",
+      subtitle: "Generate and view tag verify reports",
+    },
     "/dailyregister": {
       icon: FileText,
       title: "Daily Register",
@@ -288,6 +306,11 @@ export function SiteHeader() {
       title: "TDS Report",
       subtitle: "Generate and view tds reports",
     },
+    "/ratecutreport": {
+      icon: FileSpreadsheet,
+      title: "Rate Cut Report",
+      subtitle: "Generate and view rate cut reports",
+    },
     "/teams": {
       icon: Users,
       title: "Teams",
@@ -298,16 +321,11 @@ export function SiteHeader() {
       title: "Tasks",
       subtitle: "Manage and view all tasks",
     },
-    "/gstr1": {
-      icon: FileText,
-      title: "GSTR-1",
-      subtitle: "Generate and view gstr-1 reports",
-    },
-    "/gst2b": {
-      icon: FileText,
-      title: "GST2B",
-      subtitle: "Generate and view gst2b reports",
-    },
+    "/store":{
+      icon: Store,
+      title: "Stores",
+      subtitle: "Manage and view all stores",
+    }
   };
 
 
@@ -350,6 +368,10 @@ export function SiteHeader() {
         </select>
 
         <div className="flex items-center gap-4 text-gray-700">
+
+          <button onClick={() => navigate("/store")}> 
+            <Store className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
+          </button>
           <button onClick={() => navigate("/tasks")}> 
             <FileBarChart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
           </button>

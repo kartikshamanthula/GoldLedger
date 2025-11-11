@@ -7,7 +7,6 @@ import {
   Package,
   Calendar,
   Receipt,
-  Briefcase,
   FileText,
   ShoppingCart,
   CreditCard,
@@ -20,6 +19,25 @@ import {
   Layers,
   LibraryBig,
   ShoppingBag,
+  PencilRuler,
+  BadgeIndianRupee,
+  Undo2,
+  NotebookPen,
+  NotepadText,
+  ReceiptIndianRupee,
+  Truck,
+  FolderOpen,
+  ChartNoAxesColumnDecreasing,
+  TrendingUp,
+  ChartNoAxesCombined,
+  TrendingUpDown,
+  Book,
+  ChartColumnDecreasing,
+  SquareChartGantt,
+  CalendarClock,
+  UserCheck,
+  Tag,
+  ChartNoAxesColumn,
 } from "lucide-react"
 
 import {
@@ -50,13 +68,13 @@ const navData = [
   },
   {
     title: "Items",
-    icon: Package,
+    icon: ShoppingCart,
     items: [
-      { title: "Items", url: "/items", icon: Package },
-      { title: "Item Groups", url: "/items-groups", icon: FileText },
-      { title: "Item Units", url: "/items-units", icon: FileSpreadsheet },
-      { title: "Touch & Colors", url: "/items-colors", icon: Palette  },
-      { title: "Item Designs", url: "/items-designs", icon: Palette  },
+      { title: "Items", url: "/items", icon: ShoppingBag },
+      { title: "Item Groups", url: "/items-groups", icon: Layers },
+      { title: "Item Units", url: "/items-units", icon: PencilRuler },
+      { title: "Touch & Colors", url: "/items-colors", icon: Palette },
+      { title: "Item Designs", url: "/items-designs", icon: Palette },
     ],
   },
   {
@@ -68,25 +86,24 @@ const navData = [
     title: "Vouchers",
     icon: Receipt,
     items: [
-      { title: "Estimate", url: "/estimate", icon: FileText },
-      { title: "Sales", url: "/sales", icon: ShoppingCart },
-      { title: "Sale Return", url: "/salesreturn", icon: CreditCard },
+      { title: "Sales", url: "/sales", icon: BadgeIndianRupee },
+      { title: "Sale Return", url: "/salesreturn", icon: Undo2 },
       { title: "Purchase", url: "/purchase", icon: ShoppingCart },
-      { title: "Purchase Return", url: "/purchasereturn", icon: CreditCard },
-      { title: "Credit Note", url: "/creditnote", icon: FileText },
-      { title: "Debit Note", url: "/debitnote", icon: FileText },
-      { title: "Receipt Note", url: "/receiptnote", icon: FileText },
-      { title: "Delivery Challans", url: "/deliverychallans", icon: FileText },
-      { title: "Opening", url: "/opening", icon: FileSpreadsheet },
+      { title: "Purchase Return", url: "/purchasereturn", icon: Undo2 },
+      { title: "Credit Note", url: "/creditnote", icon: NotebookPen },
+      { title: "Debit Note", url: "/debitnote", icon: NotepadText },
+      { title: "Receipt Note", url: "/receiptnote", icon: ReceiptIndianRupee },
+      { title: "Delivery Challans", url: "/deliverychallans", icon: Truck },
+      { title: "Opening", url: "/opening", icon: FolderOpen },
     ],
   },
   {
     title: "Order",
     icon: ShoppingCart,
     items: [
-      { title: "Order Types", url: "/ordertypes", icon: Layers  },
-      { title: "Order Customer", url: "/ordercustomer", icon: FileText },
-      { title: "Order Supplier", url: "/ordersupplier", icon: ShoppingBag  },
+      { title: "Order Types", url: "/ordertypes", icon: Layers },
+      { title: "Order Customer", url: "/ordercustomer", icon: ReceiptIndianRupee },
+      { title: "Order Supplier", url: "/ordersupplier", icon: ShoppingBag },
     ],
   },
   {
@@ -96,42 +113,46 @@ const navData = [
   },
   {
     title: "Receipts",
-    icon: FileSpreadsheet,
+    icon: ChartNoAxesColumnDecreasing,
     url: "/receipts"
   },
   {
     title: "Rate Cut",
-    icon: Shredder ,
+    icon: Shredder,
     url: "/ratecut"
   },
   {
     title: "Ledgers",
-    icon: LibraryBig ,
+    icon: LibraryBig,
     items: [
       { title: "Ledgers", url: "/ledgers", icon: Users },
-      { title: "Ledger Groups", url: "/ledgergroups", icon: FileText },
+      { title: "Ledger Groups", url: "/ledgergroups", icon: FolderSync },
     ],
   },
   {
     title: "Transfers",
-    icon: FolderSync ,
+    icon: FolderSync,
     url: "/transfers"
   },
   {
     title: "Reports",
-    icon: FileText,
+    icon: ChartNoAxesColumn,
     items: [
-      { title: "Ledger Report", url: "/ledgerreport", icon: FileText },
-      { title: "Balance Sheet", url: "/balancesheet", icon: FileSpreadsheet },
-      { title: "Cash Flow", url: "/cashflow", icon: PieChart },
-      { title: "Day Book", url: "/daybook", icon: Calendar },
-      { title: "Profit & Loss", url: "/profitloss", icon: FileText },
-      { title: "Trial Balance", url: "/trialbalance", icon: FileText },
+      { title: "Ledger Report", url: "/ledgerreport", icon: TrendingUp },
+      { title: "Balance Sheet", url: "/balancesheet", icon: ChartNoAxesCombined },
+      { title: "Cash Flow", url: "/cashflow", icon: TrendingUpDown },
+      { title: "Day Book", url: "/daybook", icon: Book },
+      { title: "Profit & Loss", url: "/profitloss", icon: ChartColumnDecreasing },
+      { title: "Trial Balance", url: "/trialbalance", icon: SquareChartGantt },
       { title: "Stock", url: "/stock", icon: Package },
       { title: "Voucher", url: "/voucher", icon: Receipt },
-      { title: "Daily Register", url: "/dailyregister", icon: FileText },
-      { title: "Ageing", url: "/ageing", icon: Calendar },
-      { title: "TDS Report", url: "/tdsreport", icon: FileSpreadsheet },
+      { title: "Order Summary", url: "/ordersummary", icon: FileText },
+      { title: "Tag Report", url: "/tagreport", icon: Tag },
+      { title: "Tag Verify", url: "/tagverify", icon: Tag },
+      { title: "Daily Register", url: "/dailyregister", icon: CalendarClock },
+      { title: "Ageing", url: "/ageing", icon: UserCheck },
+      { title: "TDS Report", url: "/tdsreport", icon: TrendingUp },
+      { title: "Rate Cut Report", url: "/ratecutreport", icon: Shredder },
     ],
   },
   {
@@ -145,11 +166,11 @@ export function AppSidebar(props) {
   const location = useLocation()
   const [activeMenu, setActiveMenu] = React.useState(null)
 
-  
+
   React.useEffect(() => {
     const currentPath = location.pathname
 
-    
+
     const foundMenu = navData.find((item) =>
       item.url === currentPath
         ? true
@@ -206,11 +227,10 @@ export function AppSidebar(props) {
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
                         asChild
-                        className={`flex items-center gap-2 transition-colors ${
-                          isActive
+                        className={`flex items-center gap-2 transition-colors ${isActive
                             ? "bg-amber-500 text-"
                             : "hover:bg-amber-400 hover:text-white"
-                        }`}
+                          }`}
                       >
                         {item.url ? (
                           <NavLink to={item.url}>
@@ -249,11 +269,10 @@ export function AppSidebar(props) {
                                 <SidebarMenuSubButton asChild>
                                   <NavLink
                                     to={subItem.url}
-                                    className={`flex items-center gap-2 px-3 py-1 rounded-md transition-colors ${
-                                      isSubActive
+                                    className={`flex items-center gap-2 px-3 py-1 rounded-md transition-colors ${isSubActive
                                         ? "bg-amber-400 text-black"
                                         : "hover:bg-amber-400 hover:text-black"
-                                    }`}
+                                      }`}
                                   >
                                     <subItem.icon className="w-4 h-4" />
                                     <span>{subItem.title}</span>

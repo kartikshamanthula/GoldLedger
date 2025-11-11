@@ -7,7 +7,7 @@ const initialState = {
     data : savedunits,
     loading : false,
     error : null,
-    Filters : storedFilters,
+    filters : storedFilters,
 };
 
 const itemUnitSlice = createSlice({
@@ -35,15 +35,15 @@ const itemUnitSlice = createSlice({
             }
         },
         deleteUnit(state,action){
-            state.data = state.data.filters((unit) => unit.id !== action.payload);
+            state.data = state.data.filter((unit) => unit.id !== action.payload);
             localStorage.setItem("itemUnitData", JSON.stringify(state.unit));
         },
         setFilters(state,action){
-            state.Filters = action.payload;
-            localStorage.setItem("itemUnitFilters", JSON.stringify(state.Filters));
+            state.filters = action.payload;
+            localStorage.setItem("itemUnitFilters", JSON.stringify(state.filters));
         },
         clearFilters(state){
-            state.Filters = {};
+            state.filters = {};
             localStorage.removeItem("itemunitFilters");
         },
         setError(state,action){

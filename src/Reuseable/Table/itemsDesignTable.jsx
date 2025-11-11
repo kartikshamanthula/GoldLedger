@@ -21,38 +21,70 @@ import {
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
 import { MoreVertical, Pencil, Trash2 } from "lucide-react";
-import UnitForm from "../Modelform/UnitForm";
+import DesignForm from "../Modelform/DesignForm";
 import FilterForm from "../Filterform/FilterForm";
 import { useSelector, useDispatch } from "react-redux";
 import {
     startLoading,
-    loadItemUnitSuccess,
-    deleteUnit,
-} from "../../Pages/Items/itemUnitSlice";
+    loadItemDesignSuccess,
+    deleteDesign,
+} from "../../Pages/Items/itemDesignSlice";
 
-export default function UnitTable() {
+export default function DesignTable() {
     const [editData, setEditData] = React.useState(null);
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [deleteTarget, setDeleteTarget] = React.useState(null);
     const [confirmOpen, setConfirmOpen] = React.useState(false);
 
     const dispatch = useDispatch();
-    const { data, loading, filters } = useSelector((state) => state.itemUnit);
+    const { data, loading, filters } = useSelector((state) => state.itemDesign);
 
-    
+    // ✅ Load from localStorage
     React.useEffect(() => {
         dispatch(startLoading());
         setTimeout(() => {
-            const savedUnits = JSON.parse(localStorage.getItem("itemUnitData")) || [];
-            dispatch(loadItemUnitSuccess(savedUnits));
+            const savedDesigns = JSON.parse(localStorage.getItem("itemDesignData")) || [];
+            dispatch(loadItemDesignSuccess(savedDesigns));
         }, 500);
     }, [dispatch]);
 
-    
+    // ✅ Table Columns (clean + new Design No)
     const columns = React.useMemo(
         () => [
-            { accessorKey: "name", header: "Unit Name" },
-            { accessorKey: "shortname", header: "Short Name" },
+            { accessorKey: "itemgroup", header: "Item Group" },
+            {
+                accessorKey: "items",
+                header: "Item",
+                cell: ({ row }) => <span>{row.original.items?.name || row.original.items}</span>,
+            },
+            {
+                accessorKey: "design",
+                header: "Design No",
+                cell: ({ row }) => (
+                    <span className="font-medium text-blue-700">{row.original.design}</span>
+                ),
+            },
+            { accessorKey: "suppliers", header: "Supplier" },
+            { accessorKey: "supplierdn", header: "Supplier Design Number" },
+            { accessorKey: "narration", header: "Narration" },
+            {
+                accessorKey: "status",
+                header: "Status",
+                cell: ({ row }) => {
+                    const status = row.getValue("status");
+                    const color =
+                        status === "Active"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700";
+                    return (
+                        <span
+                            className={`px-2 py-1 text-xs font-semibold rounded-full ${color}`}
+                        >
+                            {status}
+                        </span>
+                    );
+                },
+            },
             {
                 id: "actions",
                 header: "Actions",
@@ -102,35 +134,32 @@ export default function UnitTable() {
         []
     );
 
-    
+    // ✅ Delete confirmation logic
     const handleConfirmDelete = () => {
-        console.log(deleteTarget);
         if (deleteTarget) {
-            dispatch(deleteUnit(deleteTarget.id));
+            dispatch(deleteDesign(deleteTarget.id));
             setConfirmOpen(false);
             setDeleteTarget(null);
 
-            const updatedUnits =
-                data.filter((unit) => unit.id !== deleteTarget.id) || [];
-            localStorage.setItem("itemUnitData", JSON.stringify(updatedUnits));
+            const updatedDesigns =
+                data.filter((design) => design.id !== deleteTarget.id) || [];
+            localStorage.setItem("itemDesignData", JSON.stringify(updatedDesigns));
         }
     };
 
-    
+    // ✅ Filter logic (optional)
     const filteredData = React.useMemo(() => {
         if (!filters || Object.keys(filters).length === 0) return data;
 
-        return data.filter((unit) => {
+        return data.filter((design) => {
             return (
                 (!filters.name ||
-                    unit.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
-                (!filters.shortname ||
-                    unit.shortname?.toLowerCase().includes(filters.shortname.toLowerCase()))
+                    design.items?.toLowerCase().includes(filters.name.toLowerCase())) &&
+                (!filters.status || design.status === filters.status)
             );
         });
     }, [data, filters]);
 
-    
     return (
         <>
             <ReusableTable
@@ -140,8 +169,8 @@ export default function UnitTable() {
                 pageSize={15}
                 toolbarRight={[
                     <FilterForm key="filter" />,
-                    <UnitForm
-                        key="unitForm"
+                    <DesignForm
+                        key="designform"
                         open={isFormOpen}
                         onOpenChange={(open) => {
                             setIsFormOpen(open);
@@ -150,17 +179,18 @@ export default function UnitTable() {
                         data={editData}
                     />,
                 ]}
-                emptyMessage="item unit not found."
+                emptyMessage="No design found."
             />
 
-            
+            {/* ✅ Delete confirmation dialog */}
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Delete Confirmation</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you sure you want to delete{" "}
-                            <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
+                            <strong>{deleteTarget?.items || "this design"}</strong>? This action
+                            cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
