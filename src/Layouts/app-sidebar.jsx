@@ -14,6 +14,12 @@ import {
   Users,
   PieChart,
   FileSpreadsheet,
+  Shredder,
+  FolderSync,
+  Palette,
+  Layers,
+  LibraryBig,
+  ShoppingBag,
 } from "lucide-react"
 
 import {
@@ -47,8 +53,10 @@ const navData = [
     icon: Package,
     items: [
       { title: "Items", url: "/items", icon: Package },
-      { title: "Items Groups", url: "/items-groups", icon: FileText },
-      { title: "Items Units", url: "/items-units", icon: FileSpreadsheet },
+      { title: "Item Groups", url: "/items-groups", icon: FileText },
+      { title: "Item Units", url: "/items-units", icon: FileSpreadsheet },
+      { title: "Touch & Colors", url: "/items-colors", icon: Palette  },
+      { title: "Item Designs", url: "/items-designs", icon: Palette  },
     ],
   },
   {
@@ -73,25 +81,13 @@ const navData = [
     ],
   },
   {
-    title: "Jobwork",
-    icon: Briefcase,
-    items: [
-      { title: "Material In", url: "/materialin", icon: FileText },
-      { title: "Material Out", url: "/materialout", icon: FileText },
-    ],
-  },
-  {
     title: "Order",
     icon: ShoppingCart,
     items: [
-      { title: "Order Purchase", url: "/orderpurchase", icon: FileText },
-      { title: "Order Sales", url: "/ordersales", icon: FileText },
+      { title: "Order Types", url: "/ordertypes", icon: Layers  },
+      { title: "Order Customer", url: "/ordercustomer", icon: FileText },
+      { title: "Order Supplier", url: "/ordersupplier", icon: ShoppingBag  },
     ],
-  },
-  {
-    title: "Quotations",
-    icon: FileText,
-    url: "/quotations"
   },
   {
     title: "Payments",
@@ -104,8 +100,13 @@ const navData = [
     url: "/receipts"
   },
   {
+    title: "Rate Cut",
+    icon: Shredder ,
+    url: "/ratecut"
+  },
+  {
     title: "Ledgers",
-    icon: Users,
+    icon: LibraryBig ,
     items: [
       { title: "Ledgers", url: "/ledgers", icon: Users },
       { title: "Ledger Groups", url: "/ledgergroups", icon: FileText },
@@ -113,7 +114,7 @@ const navData = [
   },
   {
     title: "Transfers",
-    icon: PieChart,
+    icon: FolderSync ,
     url: "/transfers"
   },
   {
@@ -131,14 +132,6 @@ const navData = [
       { title: "Daily Register", url: "/dailyregister", icon: FileText },
       { title: "Ageing", url: "/ageing", icon: Calendar },
       { title: "TDS Report", url: "/tdsreport", icon: FileSpreadsheet },
-    ],
-  },
-  {
-    title: "GST",
-    icon: FileSpreadsheet,
-    items: [
-      { title: "GSTR-1", url: "/gstr1", icon: FileText },
-      { title: "GST2B", url: "gst2b", icon: FileSpreadsheet },
     ],
   },
   {
