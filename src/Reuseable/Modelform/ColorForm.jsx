@@ -14,64 +14,64 @@ import {
 } from "@/components/ui/sheet";
 import { Package, Settings, Pencil } from "lucide-react";
 import { useDispatch } from "react-redux";
-import { addUnit, updateUnit } from "../../Pages/Items/itemUnitSlice"; 
+import { addColor, updateColor } from "../../Pages/Items/itemColorSlice";
 
-export default function UnitForm({ open, onOpenChange, data }) {
+export default function ColorForm({ open, onOpenChange, data }) {
     const isEditMode = Boolean(data);
 
     const [name, setName] = useState("");
-    const [shortname, setShortName] = useState("");
+    const [realtouch, setRealTouch] = useState("");
     const [errors, setErrors] = useState({});
 
     const dispatch = useDispatch();
 
-    
+
     const validateForm = () => {
         const newErrors = {};
         if (!name) newErrors.name = "Unit name is required";
-        if (!shortname) newErrors.shortname = "Short name is required";
+        if (!realtouch) newErrors.realtouch = "real touch is required";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    
+
     useEffect(() => {
         if (data) {
             setName(data.name || "");
-            setShortName(data.shortname || "");
+            setRealTouch(data.realtouch || "");
         } else {
             setName("");
-            setShortName("");
+            setRealTouch("");
         }
     }, [data, open]);
 
-    
+
     const handleSave = () => {
         if (!validateForm()) return;
 
         const formData = {
             id: isEditMode ? data.id : Date.now(),
             name,
-            shortname,
+            realtouch,
         };
 
         if (isEditMode) {
-            dispatch(updateUnit({ id: formData.id, updatedData: formData }));
+            dispatch(updateColor({ id: formData.id, updatedData: formData }));
         } else {
-            dispatch(addUnit(formData));
+            dispatch(addColor(formData));
         }
 
         onOpenChange(false);
     };
 
-    
+
     return (
         <Sheet onOpenChange={onOpenChange} open={open}>
             {!isEditMode && (
                 <SheetTrigger asChild>
                     <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-500 py-2 px-4 text-white font-semibold rounded transition">
                         <Package className="w-5 h-5" />
-                        Add Unit
+                        Add Touch
                     </Button>
                 </SheetTrigger>
             )}
@@ -86,12 +86,12 @@ export default function UnitForm({ open, onOpenChange, data }) {
                             )}
                             <div>
                                 <SheetTitle>
-                                    {isEditMode ? "Edit Unit" : "Create New Unit"}
+                                    {isEditMode ? "Edit touch" : "Create New touch"}
                                 </SheetTitle>
                                 <SheetDescription>
                                     {isEditMode
-                                        ? "Modify the details below to update the unit."
-                                        : "Fill in the details below to create a new unit."}
+                                        ? "Modify the details below to update the touch."
+                                        : "Fill in the details below to create a new touch."}
                                 </SheetDescription>
                             </div>
                         </div>
@@ -103,11 +103,11 @@ export default function UnitForm({ open, onOpenChange, data }) {
                 <div className="mt-6 space-y-5 p-2">
                     <div className="grid gap-2">
                         <Label htmlFor="name">
-                            Unit Name <span className="text-red-500">*</span>
+                            Name <span className="text-red-500">*</span>
                         </Label>
                         <Input
                             id="name"
-                            placeholder="Enter unit name"
+                            placeholder="Enter name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
@@ -117,17 +117,20 @@ export default function UnitForm({ open, onOpenChange, data }) {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="shortname">
-                            Short Name <span className="text-red-500">*</span>
+                        <Label htmlFor="realtouch">
+                            Real Touch <span className="text-red-500">*</span>
                         </Label>
                         <Input
-                            id="shortname"
-                            placeholder="Enter short name"
-                            value={shortname}
-                            onChange={(e) => setShortName(e.target.value)}
+                            id="realtouch"
+                            placeholder="Enter Real Touch"
+                            value={realtouch}
+                            onChange={(e) => {
+                                const value = e.target.value.replace(/[^0-9]/g, "");
+                                setRealTouch(value);
+                            }}
                         />
-                        {errors.shortname && (
-                            <p className="text-red-500 text-sm">{errors.shortname}</p>
+                        {errors.realtouch && (
+                            <p className="text-red-500 text-sm">{errors.realtouch}</p>
                         )}
                     </div>
                 </div>

@@ -104,6 +104,7 @@ export default function UnitTable() {
 
     
     const handleConfirmDelete = () => {
+        console.log(deleteTarget);
         if (deleteTarget) {
             dispatch(deleteUnit(deleteTarget.id));
             setConfirmOpen(false);
@@ -111,7 +112,7 @@ export default function UnitTable() {
 
             const updatedUnits =
                 data.filter((unit) => unit.id !== deleteTarget.id) || [];
-            localStorage.setItem("itemUnitData", JSON.stringify(updatedUnits)); // ✅ Corrected key
+            localStorage.setItem("itemUnitData", JSON.stringify(updatedUnits));
         }
     };
 

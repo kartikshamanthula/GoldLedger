@@ -2,7 +2,10 @@ import { createSlice, nanoid } from "@reduxjs/toolkit";
 
 
 const savedItems = JSON.parse(localStorage.getItem("itemsData")) || [];
-const savedFilters = JSON.parse(localStorage.getItem("itemsFilters")) || {}; // ✅ Object, not array
+
+const storedFilters = JSON.parse(localStorage.getItem("itemsFilters")) || {};
+const savedFilters = JSON.parse(localStorage.getItem("itemsFilters")) || {};
+
 
 const initialState = {
     data: savedItems,

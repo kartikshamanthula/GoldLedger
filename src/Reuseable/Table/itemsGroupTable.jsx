@@ -104,8 +104,9 @@ export default function GroupTable() {
 
     
     const handleConfirmDelete = () => {
+        console.log(deleteTarget)
         if (deleteTarget) {
-            dispatch(deleteItem(deleteTarget.id));
+            dispatch(deleteGroup(deleteTarget.id));
             setConfirmOpen(false);
             setDeleteTarget(null);
 

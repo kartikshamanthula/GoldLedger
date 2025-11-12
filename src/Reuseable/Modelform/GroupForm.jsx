@@ -31,7 +31,7 @@ export default function GroupForm({ open, onOpenChange, data }) {
         const newErrors = {};
         if (!name) newErrors.name = "Group Name is required";
         if (!shortname) newErrors.shortname = "ShortName is required";
-        if(!decimalnumber) newErrors.decimalnumber = "Decimal Number is required";
+        if (!decimalnumber) newErrors.decimalnumber = "Decimal Number is required";
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -78,7 +78,7 @@ export default function GroupForm({ open, onOpenChange, data }) {
                     </Button>
                 </SheetTrigger>
             )}
-            <SheetContent className="sm:max-w-[480px] overflow-y-auto">
+            <SheetContent className="sm:max-w-[350px] overflow-y-auto">
                 <SheetHeader className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function GroupForm({ open, onOpenChange, data }) {
                 </SheetHeader>
 
 
-                <div className="mt-6 space-y-5">
+                <div className="mt-6 space-y-5 p-2">
                     <div className="grid gap-2">
                         <Label htmlFor="name">
                             Group Name <span className="text-red-500">*</span>

@@ -20,54 +20,57 @@ import {
     AlertDialogCancel,
     AlertDialogAction,
 } from "@/components/ui/alert-dialog";
-import { MoreVertical, Pencil, Trash2, Plus } from "lucide-react";
-import Form from "../Modelform/Form";
+import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import DesignForm from "../Modelform/DesignForm";
 import FilterForm from "../Filterform/FilterForm";
 import { useSelector, useDispatch } from "react-redux";
 import {
     startLoading,
-    loadItemSuccess,
-    deleteItem,
-} from "../../Pages/Items/itemSlice";
+    loadItemDesignSuccess,
+    deleteDesign,
+} from "../../Pages/Items/itemDesignSlice";
 
-export default function Table() {
+export default function DesignTable() {
     const [editData, setEditData] = React.useState(null);
     const [isFormOpen, setIsFormOpen] = React.useState(false);
     const [deleteTarget, setDeleteTarget] = React.useState(null);
     const [confirmOpen, setConfirmOpen] = React.useState(false);
 
     const dispatch = useDispatch();
-    const { data, loading, filters } = useSelector((state) => state.items);
-
+    const { data, loading, filters } = useSelector((state) => state.itemDesign);
+    const itemData = useSelector((state) => state.items?.data || []);
 
     React.useEffect(() => {
         dispatch(startLoading());
         setTimeout(() => {
-            const savedItems = JSON.parse(localStorage.getItem("itemsData")) || [];
-            dispatch(loadItemSuccess(savedItems));
+            const savedDesigns = JSON.parse(localStorage.getItem("itemDesignData")) || [];
+            dispatch(loadItemDesignSuccess(savedDesigns));
         }, 500);
     }, [dispatch]);
+
+    const  getItemGroup = (itemName) => {
+        const item = itemData.find((i) =>  i.name === itemName);
+        return item?.group || item?.itemgroup || "-";
+    };
 
 
     const columns = React.useMemo(
         () => [
-            { accessorKey: "group", header: "Group" },
-            { accessorKey: "name", header: "Name" },
-            { accessorKey: "shortname", header: "Short Name"},
-            { accessorKey: "type", header: "Type" },
+            {   accessorKey: "itemgroup", 
+                header: "Item Group",
+                cell: ({row}) => <span>{getItemGroup(row.original.items)}</span>
+            },
             {
-                accessorKey: "stock",
-                header: "Want Stock",
+                accessorKey: "items",
+                header: "Item",
+                cell: ({ row }) => <span>{row.original.items?.name || row.original.items}</span>,
+            },
+            {
+                accessorKey: "design",
+                header: "Design No",
                 cell: ({ row }) => (
-                    <span
-                        className={`px-2 py-1 text-xs font-semibold rounded-full ${row.getValue("stock") === "Yes"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-gray-100 text-gray-600"
-                            }`}
-                    >
-                        {row.getValue("stock")}
-                    </span>
-                ),
+                    <span className="font-medium">{row.original.design}</span>
+                ), 
             },
             {
                 accessorKey: "status",
@@ -87,6 +90,8 @@ export default function Table() {
                     );
                 },
             },
+            { accessorKey: "suppliers", header: "Supplier" },
+            { accessorKey: "supplierdn", header: "Supplier Design Number" },
             {
                 id: "actions",
                 header: "Actions",
@@ -135,35 +140,25 @@ export default function Table() {
         ],
         []
     );
-
-
     const handleConfirmDelete = () => {
         if (deleteTarget) {
-            dispatch(deleteItem(deleteTarget.id));
+            dispatch(deleteDesign(deleteTarget.id));
             setConfirmOpen(false);
             setDeleteTarget(null);
 
-            const updatedItems =
-                data.filter((item) => item.id !== deleteTarget.id) || [];
-            localStorage.setItem("itemsData", JSON.stringify(updatedItems));
+            const updatedDesigns =
+                data.filter((design) => design.id !== deleteTarget.id) || [];
+            localStorage.setItem("itemDesignData", JSON.stringify(updatedDesigns));
         }
     };
-
-
     const filteredData = React.useMemo(() => {
         if (!filters || Object.keys(filters).length === 0) return data;
 
-        return data.filter((item) => {
+        return data.filter((design) => {
             return (
                 (!filters.name ||
-                    item.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
-                (!filters.shortname || 
-                    item.shortname?.toLowercase().includes(filters.shortname.toLowerCase())) &&
-                (!filters.group || item.group === filters.group) &&
-                (!filters.type || item.type === filters.type) &&
-                (!filters.unit || item.unit === filters.unit) &&
-                (!filters.status || item.status === filters.status) &&
-                (!filters.wantStock || item.stock === filters.wantStock)
+                    design.items?.toLowerCase().includes(filters.name.toLowerCase())) &&
+                (!filters.status || design.status === filters.status)
             );
         });
     }, [data, filters]);
@@ -172,32 +167,22 @@ export default function Table() {
         <>
             <ReusableTable
                 columns={columns}
-                data={Data}
+                data={filteredData}
                 loading={loading}
                 pageSize={15}
                 toolbarRight={[
                     <FilterForm key="filter" />,
-                    <Button
-                        key="addItem"
-                        className="bg-blue-700 hover:bg-blue-500 text-white"
-                        onClick={() => {
-                            setEditData(null);
-                            setIsFormOpen(true);
+                    <DesignForm
+                        key="designform"
+                        open={isFormOpen}
+                        onOpenChange={(open) => {
+                            setIsFormOpen(open);
+                            if (!open) setEditData(null);
                         }}
-                    >
-                        <Plus className="w-4 h-4 mr-2" /> Add Item
-                    </Button>,
+                        data={editData}
+                    />,
                 ]}
-                emptyMessage="No items found."
-            />
-
-            <Form
-                open={isFormOpen}
-                onOpenChange={(open) => {
-                    setIsFormOpen(open);
-                    if (!open) setEditData(null);
-                }}
-                data={editData}
+                emptyMessage="No design found."
             />
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
@@ -205,7 +190,8 @@ export default function Table() {
                         <AlertDialogTitle>Delete Confirmation</AlertDialogTitle>
                         <AlertDialogDescription>
                             Are you sure you want to delete{" "}
-                            <strong>{deleteTarget?.name}</strong>? This action cannot be undone.
+                            <strong>{deleteTarget?.items || "this design"}</strong>? This action
+                            cannot be undone.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

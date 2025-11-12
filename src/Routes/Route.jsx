@@ -5,8 +5,9 @@ import Dashboard from "@/Pages/Dashboard"
 import Items from "@/Pages/Items/Items"
 import ItemsGroups from "@/Pages/Items/ItemsGroups"
 import ItemsUnits from "@/Pages/Items/ItemsUnits"
+import ItemsColors from "@/Pages/Items/ItemsColors"
+import ItemsDesign from "@/Pages/Items/ItemDesign"
 import Years  from "@/Pages/Years/Years"
-import Estimate from "@/Pages/Vouchers/Estimate" 
 import Sales from "@/Pages/Vouchers/Sales"
 import SalesReturn from "@/Pages/Vouchers/SalesReturn"
 import Purchase from "@/Pages/Vouchers/Purchase"
@@ -16,13 +17,12 @@ import DebitsNote from "@/Pages/Vouchers/DebitsNote"
 import ReceiptNote from "@/Pages/Vouchers/ReceiptNote"
 import DeliveryChallans from "@/Pages/Vouchers/DeliveryChallans"
 import Opening from "@/Pages/Vouchers/Opening"
-import MaterialIn from "@/Pages/Jobwork/MaterialIn"
-import MaterialOut from "@/Pages/Jobwork/MaterialOut"
-import OrderPurchase from "@/Pages/Order/OrderPurchase"
-import OrderSales from "@/Pages/Order/OrderSales"
-import Quotations from "@/Pages/Quotations/Quotations"
+import OrderTypes from "@/Pages/Order/OrderTypes"
+import OrderCustomer from "@/Pages/Order/OrderCustomer"
+import OrderSupplier from "@/Pages/Order/OrderSupplier"
 import Payments from "@/Pages/Payments/Payments"
 import Receipts from "@/Pages/Receipts/Receipts"
+import RateCut from "@/Pages/RateCut/ratecut"
 import Ledgers from "@/Pages/Ledgers/Ledgers"
 import LedgerGroups from "@/Pages/Ledgers/LedgerGroups"
 import Transfers from "@/Pages/Transfers/Transfers"
@@ -34,13 +34,16 @@ import ProfitLoss from "@/Pages/Reports/ProfitLoss"
 import TrialBalance from "@/Pages/Reports/TrialBalance"
 import Stock from "@/Pages/Reports/Stock"
 import Voucher from "@/Pages/Reports/Voucher"
+import OrderSummary from "@/Pages/Reports/OrderSummary"
+import TagReport from "@/Pages/Reports/TagReport"
+import TagVerify from "@/Pages/Reports/TagVerify"
 import DailyRegister from "@/Pages/Reports/DailyRegister"
 import Ageing from "@/Pages/Reports/Ageing"
 import TDSReport from "@/Pages/Reports/TDSReport"
-import GSTR1 from "@/Pages/GST/GSTR1"
-import GST2B from "@/Pages/GST/GST2B"
+import RateCutReport from "@/Pages/Reports/RateCutReport"
 import Teams from "@/Pages/Team/Teams"
 import Tasks from "@/Pages/Task/Tasks"
+import Stores from "@/Pages/Store/Stores";
 
 
 export function Router() {
@@ -56,13 +59,14 @@ export function Router() {
         <Route path="/items" element={<Items />} />
         <Route path="/items-Groups" element={<ItemsGroups />} />
         <Route path="/items-units" element={<ItemsUnits />} />
+        <Route path="/items-colors" element={<ItemsColors />} />
+        <Route path="/items-designs" element={<ItemsDesign />} />
 
         //years Routes
         <Route path="/years" element={<Years />} />
 
 
         //Vouchers Routes
-          <Route path="/estimate" element={<Estimate />} />
           <Route path="/sales" element={<Sales />} />
           <Route path="/salesreturn" element={<SalesReturn />} />
           <Route path="/purchase" element={<Purchase />} />
@@ -74,16 +78,10 @@ export function Router() {
           <Route path="/opening" element={<Opening />} />
 
 
-        //Jobwork Routes
-        <Route path="/materialin" element={<MaterialIn />} />
-        <Route path="/materialout" element={<MaterialOut/>} />
-
         //Order Routes
-        <Route path="/orderpurchase" element={<OrderPurchase />} />
-        <Route path="/ordersales" element={<OrderSales />} />
-
-        //Quotations Routes
-        <Route path="/quotations" element={<Quotations />} />
+        <Route path="/ordertypes" element={<OrderTypes />} />
+        <Route path="/ordercustomer" element={<OrderCustomer />} />
+        <Route path="/ordersupplier" element={<OrderSupplier />} />
 
         //Payments Routes
         <Route path="/payments" element={<Payments />} />
@@ -91,6 +89,8 @@ export function Router() {
         //Receipts Routes
         <Route path="/receipts" element={<Receipts />} />
 
+        //Rate Cut Routes
+        <Route path="/ratecut" element={<RateCut />} />
 
         //Ledgers Routes
         <Route path="/ledgers" element={<Ledgers />} />
@@ -108,14 +108,13 @@ export function Router() {
         <Route path="/trialbalance" element={<TrialBalance />} />
         <Route path="/stock" element={<Stock />} />
         <Route path="/voucher" element={<Voucher />} />
+        <Route path="/ordersummary" element={<OrderSummary />} />
+        <Route path="/tagreport" element={<TagReport />} />
+        <Route path="/tagverify" element={<TagVerify />} />
         <Route path="/dailyregister" element={<DailyRegister />} />
         <Route path="/ageing" element={<Ageing />} />
         <Route path="/tdsreport" element={<TDSReport />} />
-
-
-        //Gst Routes
-        <Route path="/gstr1" element={<GSTR1 />} />
-        <Route path="/gst2b" element={<GST2B />} />
+        <Route path="/ratecutreport" element={<RateCutReport />} />
 
 
         //Team Routes
@@ -124,8 +123,9 @@ export function Router() {
         //Task Routes
         <Route path = "/tasks" element={<Tasks />} />
 
-
-
+      </Route>
+      <Route>
+        <Route path="/store" element={<Stores />} />
       </Route>
     </Routes>
   )
