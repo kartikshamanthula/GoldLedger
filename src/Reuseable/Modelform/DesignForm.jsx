@@ -27,12 +27,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { addDesign, updateDesign } from "../../Pages/Items/itemDesignSlice";
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { isRowSelected } from "@tanstack/react-table";
 
 export default function DesignForm({ open, onOpenChange, data }) {
     const isEditMode = Boolean(data);
 
     const [items, setItems] = useState("");
-    const [itemgroup, setItemGroup] = useState(""); // ✅ new state for item group
+    const [itemgroup, setItemGroup] = useState(""); 
     const [suppliers, setSuppliers] = useState("");
     const [supplierdn, setSupplierdn] = useState("");
     const [grossweight, setGrossweight] = useState("");
@@ -42,10 +43,21 @@ export default function DesignForm({ open, onOpenChange, data }) {
     const [status, setStatus] = useState("");
     const [errors, setErrors] = useState({});
     const [photo, setPhoto] = useState(null);
+    const [design, setDesign] = useState("");
 
     const dispatch = useDispatch();
     const itemData = useSelector((state) => state.items?.data || []);
+    const allDesigns = useSelector((state) => state.itemDesign?.data || []);
     const statuses = ["Active", "Inactive"];
+
+    const generateDesignNo = (shortname) => {
+        const prefix = shortname.toLowerCase();
+
+        const existing = allDesigns.filter((d) => d.design?.startsWith(prefix));
+
+        const netNum = (existing.length + 1).toString().padStart(4, "0");
+        return `${prefix}${netNum}`;
+    }
 
     const validateForm = () => {
         const newErrors = {};
@@ -63,7 +75,6 @@ export default function DesignForm({ open, onOpenChange, data }) {
     useEffect(() => {
         if (data) {
             setItems(data.items || "");
-            setItemGroup(data.itemgroup || ""); // ✅ restore saved item group
             setSuppliers(data.suppliers || "");
             setSupplierdn(data.supplierdn || "");
             setGrossweight(data.grossweight || "");
@@ -71,9 +82,10 @@ export default function DesignForm({ open, onOpenChange, data }) {
             setNetweight(data.netweight || "0.00");
             setNarration(data.narration || "");
             setStatus(data.status || "");
+            setDesign(data.design || "");
+            
         } else {
             setItems("");
-            setItemGroup("");
             setSuppliers("");
             setSupplierdn("");
             setGrossweight("");
@@ -81,6 +93,7 @@ export default function DesignForm({ open, onOpenChange, data }) {
             setNetweight("0.00");
             setNarration("");
             setStatus("");
+            setDesign("");
         }
     }, [data, open]);
 
@@ -90,7 +103,7 @@ export default function DesignForm({ open, onOpenChange, data }) {
         const formData = {
             id: isEditMode ? data.id : Date.now(),
             items,
-            itemgroup, // ✅ include group
+            design,
             suppliers,
             supplierdn,
             grossweight,
@@ -119,7 +132,7 @@ export default function DesignForm({ open, onOpenChange, data }) {
                     </Button>
                 </SheetTrigger>
             )}
-            <SheetContent className="sm:max-w-[480px] overflow-y-auto">
+            <SheetContent className="sm:max-w-[350px] overflow-y-auto">
                 <SheetHeader className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
@@ -143,36 +156,26 @@ export default function DesignForm({ open, onOpenChange, data }) {
                     </div>
                 </SheetHeader>
 
-                <div className="mt-6 space-y-5">
-                    {/* ✅ Item dropdown */}
+                <div className="mt-6 space-y-5 p-2">
                     <Dropdown
                         label="Item"
                         value={items}
                         setValue={(selected) => {
                             setItems(selected);
-                            // ✅ auto-set item group
                             const selectedItem = itemData.find(
                                 (i) => i.name === selected
                             );
                             setItemGroup(selectedItem?.group || "");
+
+                            const shortname = selectedItem?.shortname || selected?.name?.slice(0, 5).toLowerCase();
+                            const designcode = generateDesignNo(shortname);
+                            setDesign(designcode);
+
                         }}
                         options={itemData}
                         error={errors.items}
                     />
 
-                    {/* ✅ Item Group Display (Read-only) */}
-                    <div className="grid gap-2">
-                        <Label htmlFor="itemgroup">Item Group</Label>
-                        <Input
-                            id="itemgroup"
-                            placeholder="Auto-filled from Item"
-                            value={itemgroup}
-                            readOnly
-                            className="bg-gray-100 cursor-not-allowed"
-                        />
-                    </div>
-
-                    {/* ✅ Supplier input */}
                     <div className="grid gap-2">
                         <Label htmlFor="suppliers">
                             Supplier <span className="text-red-500">*</span>
@@ -188,7 +191,6 @@ export default function DesignForm({ open, onOpenChange, data }) {
                         )}
                     </div>
 
-                    {/* ✅ Supplier Design Number */}
                     <div className="grid gap-2">
                         <Label htmlFor="supplierdn">
                             Supplier Design Number <span className="text-red-500">*</span>
@@ -203,8 +205,6 @@ export default function DesignForm({ open, onOpenChange, data }) {
                             <p className="text-red-500 text-sm">{errors.supplierdn}</p>
                         )}
                     </div>
-
-                    {/* ✅ Weights Calculation */}
                     <div className="grid gap-2">
                         <Label htmlFor="grossweight">
                             Gross Weight <span className="text-red-500">*</span>
@@ -268,8 +268,6 @@ export default function DesignForm({ open, onOpenChange, data }) {
                             <p className="text-red-500 text-sm">{errors.netweight}</p>
                         )}
                     </div>
-
-                    {/* ✅ Narration */}
                     <div className="grid gap-2">
                         <Label htmlFor="narration">
                             Narration <span className="text-red-500">*</span>
@@ -279,14 +277,12 @@ export default function DesignForm({ open, onOpenChange, data }) {
                             placeholder="Enter Narration"
                             value={narration}
                             onChange={(e) => setNarration(e.target.value)}
+                            className="h-15"
                         />
                         {errors.narration && (
                             <p className="text-red-500 text-sm">{errors.narration}</p>
                         )}
                     </div>
-
-                    {/* ✅ Photo upload (unchanged) */}
-                    {/** (same as your original — kept fully intact) */}
                     <div className="grid gap-2">
                         <Label htmlFor="photo">Photo</Label>
                         <input
@@ -361,8 +357,6 @@ export default function DesignForm({ open, onOpenChange, data }) {
                             </Dialog>
                         )}
                     </div>
-
-                    {/* ✅ Status dropdown */}
                     <Dropdown
                         label="Status"
                         value={status}

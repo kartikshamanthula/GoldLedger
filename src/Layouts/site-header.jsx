@@ -321,7 +321,7 @@ export function SiteHeader() {
       title: "Tasks",
       subtitle: "Manage and view all tasks",
     },
-    "/store":{
+    "/stores":{
       icon: Store,
       title: "Stores",
       subtitle: "Manage and view all stores",

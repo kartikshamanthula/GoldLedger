@@ -11,8 +11,6 @@ import {
   ShoppingCart,
   CreditCard,
   Users,
-  PieChart,
-  FileSpreadsheet,
   Shredder,
   FolderSync,
   Palette,
@@ -189,7 +187,7 @@ export function AppSidebar(props) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
+            <SidebarMenuButton size="xl" asChild>
               <NavLink
                 to="/dashboard"
                 className="relative flex items-center gap-2 px-3 py-2"

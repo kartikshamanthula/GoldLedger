@@ -53,10 +53,8 @@ export default function Table() {
         () => [
             { accessorKey: "group", header: "Group" },
             { accessorKey: "name", header: "Name" },
+            { accessorKey: "shortname", header: "Short Name"},
             { accessorKey: "type", header: "Type" },
-            { accessorKey: "hsn", header: "HSN/SAC Code" },
-            { accessorKey: "gst", header: "GST" },
-            { accessorKey: "unit", header: "Unit" },
             {
                 accessorKey: "stock",
                 header: "Want Stock",
@@ -159,9 +157,10 @@ export default function Table() {
             return (
                 (!filters.name ||
                     item.name?.toLowerCase().includes(filters.name.toLowerCase())) &&
+                (!filters.shortname || 
+                    item.shortname?.toLowercase().includes(filters.shortname.toLowerCase())) &&
                 (!filters.group || item.group === filters.group) &&
                 (!filters.type || item.type === filters.type) &&
-                (!filters.gst || item.gst === filters.gst) &&
                 (!filters.unit || item.unit === filters.unit) &&
                 (!filters.status || item.status === filters.status) &&
                 (!filters.wantStock || item.stock === filters.wantStock)

@@ -38,8 +38,8 @@ export default function DesignTable() {
 
     const dispatch = useDispatch();
     const { data, loading, filters } = useSelector((state) => state.itemDesign);
+    const itemData = useSelector((state) => state.items?.data || []);
 
-    // ✅ Load from localStorage
     React.useEffect(() => {
         dispatch(startLoading());
         setTimeout(() => {
@@ -48,10 +48,18 @@ export default function DesignTable() {
         }, 500);
     }, [dispatch]);
 
-    // ✅ Table Columns (clean + new Design No)
+    const  getItemGroup = (itemName) => {
+        const item = itemData.find((i) =>  i.name === itemName);
+        return item?.group || item?.itemgroup || "-";
+    };
+
+
     const columns = React.useMemo(
         () => [
-            { accessorKey: "itemgroup", header: "Item Group" },
+            {   accessorKey: "itemgroup", 
+                header: "Item Group",
+                cell: ({row}) => <span>{getItemGroup(row.original.items)}</span>
+            },
             {
                 accessorKey: "items",
                 header: "Item",
@@ -61,12 +69,9 @@ export default function DesignTable() {
                 accessorKey: "design",
                 header: "Design No",
                 cell: ({ row }) => (
-                    <span className="font-medium text-blue-700">{row.original.design}</span>
-                ),
+                    <span className="font-medium">{row.original.design}</span>
+                ), 
             },
-            { accessorKey: "suppliers", header: "Supplier" },
-            { accessorKey: "supplierdn", header: "Supplier Design Number" },
-            { accessorKey: "narration", header: "Narration" },
             {
                 accessorKey: "status",
                 header: "Status",
@@ -85,6 +90,8 @@ export default function DesignTable() {
                     );
                 },
             },
+            { accessorKey: "suppliers", header: "Supplier" },
+            { accessorKey: "supplierdn", header: "Supplier Design Number" },
             {
                 id: "actions",
                 header: "Actions",
@@ -133,8 +140,6 @@ export default function DesignTable() {
         ],
         []
     );
-
-    // ✅ Delete confirmation logic
     const handleConfirmDelete = () => {
         if (deleteTarget) {
             dispatch(deleteDesign(deleteTarget.id));
@@ -146,8 +151,6 @@ export default function DesignTable() {
             localStorage.setItem("itemDesignData", JSON.stringify(updatedDesigns));
         }
     };
-
-    // ✅ Filter logic (optional)
     const filteredData = React.useMemo(() => {
         if (!filters || Object.keys(filters).length === 0) return data;
 
@@ -181,8 +184,6 @@ export default function DesignTable() {
                 ]}
                 emptyMessage="No design found."
             />
-
-            {/* ✅ Delete confirmation dialog */}
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>

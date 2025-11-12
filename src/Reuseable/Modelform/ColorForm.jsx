@@ -75,7 +75,7 @@ export default function ColorForm({ open, onOpenChange, data }) {
                     </Button>
                 </SheetTrigger>
             )}
-            <SheetContent className="sm:max-w-[480px] overflow-y-auto">
+            <SheetContent className="sm:max-w-[350px] overflow-y-auto">
                 <SheetHeader className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export default function ColorForm({ open, onOpenChange, data }) {
                     </div>
                 </SheetHeader>
 
-                <div className="mt-6 space-y-5">
+                <div className="mt-6 space-y-5 p-2">
                     <div className="grid gap-2">
                         <Label htmlFor="name">
                             Name <span className="text-red-500">*</span>

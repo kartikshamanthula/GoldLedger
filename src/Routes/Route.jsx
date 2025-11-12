@@ -123,9 +123,9 @@ export function Router() {
         //Task Routes
         <Route path = "/tasks" element={<Tasks />} />
 
-        //Store Routes
-        <Route path = "/store" element={<Stores />} />
-
+      </Route>
+      <Route>
+        <Route path="/store" element={<Stores />} />
       </Route>
     </Routes>
   )

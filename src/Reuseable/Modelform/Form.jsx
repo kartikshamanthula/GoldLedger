@@ -33,10 +33,10 @@ export default function Form({ open, onOpenChange, data }) {
     const isEditMode = Boolean(data);
 
     const [name, setName] = useState("");
+    const [shortname, setShortname] = useState("")
     const [group, setGroup] = useState("");
     const [type, setType] = useState("");
     const [hsn, setHsn] = useState("");
-    const [gst, setGst] = useState("");
     const [unit, setUnit] = useState("");
     const [quantity, setQuantity] = useState("")
     const [stock, setStock] = useState("");
@@ -47,7 +47,7 @@ export default function Form({ open, onOpenChange, data }) {
     const dispatch = useDispatch();
 
     const itemGroups = useSelector((state) => state.itemGroup.data);
-    const types = ["Goods", "Services"];
+    const types = ["Goods", "Service", "Raw Material"];
     const gstoptions = ["0%", "5%", "12%", "18%", "28%"];
     const itemUnits = useSelector((state) => state.itemUnit.data);
     const stockoptions = ["Yes", "No"];
@@ -56,10 +56,10 @@ export default function Form({ open, onOpenChange, data }) {
     const validateForm = () => {
         const newErrors = {};
         if (!name) newErrors.name = "Name is required";
+        if (!shortname) newErrors.shortname = "Short Name is required";
         if (!group) newErrors.group = "Group is required";
         if (!type) newErrors.type = "Type is required";
         if (!hsn) newErrors.hsn = "HSN/SAC Code is required";
-        if (!gst) newErrors.gst = "GST is required";
         if (!unit) newErrors.unit = "Unit is required";
         if (!stock) newErrors.stock = "Stock is required";
         if (!quantity) newErrors.quantity = "Quantity is required";
@@ -71,20 +71,20 @@ export default function Form({ open, onOpenChange, data }) {
     useEffect(() => {
         if (data) {
             setName(data.name || "");
+            setShortname(data.shortname || "");
             setGroup(data.group || "");
             setType(data.type || "");
             setHsn(data.hsn || "");
-            setGst(data.gst || "");
             setUnit(data.unit || "");
             setQuantity(data.quantity || "");
             setStock(data.stock || "");
             setStatus(data.status || "");
         } else {
             setName("");
+            setShortname("");
             setGroup("");
             setType("");
             setHsn("");
-            setGst("");
             setUnit("");
             setQuantity("");
             setStock("");
@@ -99,10 +99,10 @@ export default function Form({ open, onOpenChange, data }) {
         const formData = {
             id: isEditMode ? data.id : Date.now(),
             name,
+            shortname,
             group,
             type,
             hsn,
-            gst,
             unit,
             quantity,
             stock,
@@ -122,13 +122,14 @@ export default function Form({ open, onOpenChange, data }) {
         <Sheet onOpenChange={onOpenChange} open={open}>
             {!isEditMode && (
                 <SheetTrigger asChild>
-                    <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-500 py-2 px-4 text-white font-semibold rounded transition">
+                    <Button className="flex items-center gap-2 bg-blue-700 hover:bg-blue-500 py-2 px-4 text-white 
+                    font-semibold rounded transition">
                         <Package className="w-5 h-5" />
                         Add Item
                     </Button>
                 </SheetTrigger>
             )}
-            <SheetContent className="sm:max-w-[480px] overflow-y-auto">
+            <SheetContent className="sm:max-w-[350px] overflow-y-auto">
                 <SheetHeader className="flex flex-col gap-1">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
@@ -154,7 +155,7 @@ export default function Form({ open, onOpenChange, data }) {
                 </SheetHeader>
 
 
-                <div className="mt-6 space-y-5">
+                <div className="mt-6 space-y-5 p-2">
                     <div className="grid gap-2">
                         <Label htmlFor="name">
                             Name <span className="text-red-500">*</span>
@@ -167,6 +168,21 @@ export default function Form({ open, onOpenChange, data }) {
                         />
                         {errors.name && (
                             <p className="text-red-500 text-sm">{errors.name}</p>
+                        )}
+                    </div>
+
+                    <div className="grid gap-2">
+                        <Label htmlFor="shortname">
+                            Short Name <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                            id="shortname"
+                            placeholder="Enter short name"
+                            value={shortname}
+                            onChange={(e) => setShortname(e.target.value)}
+                        />
+                        {errors.name && (
+                            <p className="text-red-500 text-sm">{errors.shortname}</p>
                         )}
                     </div>
 
@@ -278,13 +294,6 @@ export default function Form({ open, onOpenChange, data }) {
                         />
                     </div>
 
-                    <Dropdown
-                        label="GST"
-                        value={gst}
-                        setValue={setGst}
-                        options={gstoptions}
-                        error={errors.gst}
-                    />
                     <Dropdown
                         label="Unit"
                         value={unit}
