@@ -370,7 +370,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-4 text-gray-700">
 
           <button onClick={() => navigate("/store")}> 
-            <Store className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />
+            <Store className="w-6 h-6 cursor-pointer hover:text-blue-600 transition-colors me-2 text-3xl" />
           </button>
           <button onClick={() => navigate("/tasks")}> 
             <FileBarChart className="w-5 h-5 cursor-pointer hover:text-blue-600 transition-colors me-2" />

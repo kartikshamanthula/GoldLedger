@@ -4,6 +4,7 @@ import itemGroupReducer from "../Pages/Items/itemGroupSlice";
 import itemUnitReducer from "../Pages/Items/itemUnitSlice";
 import itemColorReducer from "../Pages/Items/itemColorSlice";
 import itemDesignReducer from "../Pages/Items/itemDesignSlice";
+import cartReducer from "../Pages/Store/CartSlice";
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         itemGroup : itemGroupReducer,
         itemUnit : itemUnitReducer,
         itemColor : itemColorReducer,
-        itemDesign : itemDesignReducer
+        itemDesign : itemDesignReducer,
+        cart: cartReducer,
     },
 });
 
