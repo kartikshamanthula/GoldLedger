@@ -33,7 +33,7 @@ export default function DesignForm({ open, onOpenChange, data }) {
     const isEditMode = Boolean(data);
 
     const [items, setItems] = useState("");
-    const [itemgroup, setItemGroup] = useState(""); 
+    const [itemgroup, setItemGroup] = useState("");
     const [suppliers, setSuppliers] = useState("");
     const [supplierdn, setSupplierdn] = useState("");
     const [grossweight, setGrossweight] = useState("");
@@ -83,7 +83,8 @@ export default function DesignForm({ open, onOpenChange, data }) {
             setNarration(data.narration || "");
             setStatus(data.status || "");
             setDesign(data.design || "");
-            
+            setPhoto(data.photo || "null");
+
         } else {
             setItems("");
             setSuppliers("");
@@ -94,6 +95,7 @@ export default function DesignForm({ open, onOpenChange, data }) {
             setNarration("");
             setStatus("");
             setDesign("");
+            setPhoto(null);
         }
     }, [data, open]);
 
@@ -111,6 +113,11 @@ export default function DesignForm({ open, onOpenChange, data }) {
             netweight,
             narration,
             status,
+            isFavorite: data?.isFavorite || false,
+            pieces: data?.pieces || 1,
+            photo: photo ? photo : (data?.photo ? data.photo : ""),
+
+
         };
 
         if (isEditMode) {
@@ -292,7 +299,13 @@ export default function DesignForm({ open, onOpenChange, data }) {
                             className="hidden"
                             onChange={(e) => {
                                 const file = e.target.files[0];
-                                if (file) setPhoto(URL.createObjectURL(file));
+                                if (file) {
+                                    const reader = new FileReader();
+                                    reader.onloadend = () => {
+                                        setPhoto(reader.result);
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
                             }}
                         />
                         {!photo ? (

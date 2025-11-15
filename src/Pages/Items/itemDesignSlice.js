@@ -25,7 +25,13 @@ const itemDesignSlice = createSlice({
         },
 
         addDesign(state, action) {
-            state.data.push({ id: nanoid(), ...action.payload });
+            state.data.push({
+                id: nanoid(),
+                isFavorite: false,   
+                pieces: 1,           
+                ...action.payload
+            });
+
             localStorage.setItem("itemDesignData", JSON.stringify(state.data));
         },
 
@@ -69,6 +75,7 @@ export const {
     setError,
     setFilters,
     clearFilters,
+    addToCart
 } = itemDesignSlice.actions;
 
 export default itemDesignSlice.reducer;
