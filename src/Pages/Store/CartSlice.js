@@ -15,16 +15,17 @@ const cartSlice = createSlice({
             const existing = state.items.find(i => i.id === item.id);
 
             if (existing) {
-                existing.pieces = (existing.pieces || 1) + 1;
+                existing.pieces = item.pieces;
             } else {
                 state.items.push({
                     ...item,
-                    pieces: item.pieces || 1,
+                    pieces: item.pieces ?? 0,
                 });
             }
 
             localStorage.setItem("cartItems", JSON.stringify(state.items));
         },
+
 
         removeFromCart(state, action) {
             const id = action.payload;
@@ -36,7 +37,7 @@ const cartSlice = createSlice({
             const id = action.payload;
             const item = state.items.find(i => i.id === id);
             if (item) {
-                item.pieces++;
+                item.pieces = (item.pieces || 0) + 1;
                 localStorage.setItem("cartItems", JSON.stringify(state.items));
             }
         },
@@ -44,8 +45,12 @@ const cartSlice = createSlice({
         decreaseQty(state, action) {
             const id = action.payload;
             const item = state.items.find(i => i.id === id);
-            if (item && item.pieces > 1) {
-                item.pieces--;
+            if (item) {
+                item.pieces = (item.pieces || 0) - 1;
+
+                if (item.pieces <= 0) {
+                    state.items = state.items.filter(i => i.id !== id);
+                }
                 localStorage.setItem("cartItems", JSON.stringify(state.items));
             }
         },

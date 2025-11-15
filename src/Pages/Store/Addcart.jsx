@@ -15,41 +15,38 @@ import {
     decreaseQty,
     removeFromCart
 } from "../../Pages/Store/CartSlice";
+import { updateDesign } from "../../Pages/Items/itemDesignSlice";
 
 export function Addcart() {
 
     const cartItems = useSelector((state) => state.cart.items);
     const dispatch = useDispatch();
-    const totalPieces = cartItems.reduce((sum, i) => sum + i.pieces, 0);
+    const totalPieces = cartItems.reduce((sum, i) => sum + (i.pieces ?? 0), 0);
     const uniqueDesigns = cartItems.length;
     const totalNetWeight = cartItems.reduce(
-        (sum, i) => sum + Number(i.netweight) * i.pieces,
-        0
-    );
+        (sum, i) => sum + (Number(i.netweight) * (i.pieces ?? 0)),0);
+
+    const colorOptions = useSelector((state) => state.itemColor.data);
 
     return (
         <div>
             <Sheet>
                 
                 <SheetTrigger
-                    className="bg-[#0F172A] hover:bg-[#1E293B] text-white rounded-md p-2 flex items-center gap-2"
+                    className="bg-[#0F172A] hover:bg-[#1E293B] text-white rounded-xl px-4 py-2 flex items-center 
+                    gap-2 shadow transition relative"
                 >
                     <ShoppingCart className="w-5 h-5" />
-                    Cart
-                </SheetTrigger>
+                    <span className="font-semibold">Cart</span>
 
-                
+                    { (totalPieces > 0 || totalNetWeight > 0) && (
+                        <span className="bg-white text-black text-xs px-3 py-1 rounded-full ml-2 shadow">
+                            {totalPieces}Pcs/{totalNetWeight.toFixed(3)}g
+                        </span>
+                    )}
+                </SheetTrigger>
                 <SheetContent
-                    className="
-                        w-full
-                        sm:w-[700px]
-                        bg-white
-                        shadow-xl
-                        border-none
-                        h-screen
-                        flex flex-col
-                        overflow-hidden
-                    "
+                    className="w-full sm:w-[700px] bg-white shadow-xl border-none h-screen flex flex-col overflow-hidden"
                     side="right"
                 >
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -103,6 +100,11 @@ export function Addcart() {
                                         <label className="text-sm font-medium">Touch ID</label>
                                         <select className="w-full border rounded-lg px-3 py-2 mt-1">
                                             <option>Select touch ID</option>
+                                            {colorOptions.map((c) => (
+                                                <option key={c.id} value={c.name}>
+                                                    {c.name}
+                                                </option>    
+                                            ))}
                                         </select>
                                     </div>
 
@@ -180,16 +182,19 @@ export function Addcart() {
                                             
                                             <div className="flex items-center gap-3 mt-2 bg-gray-100 p-2 rounded-lg w-fit">
                                                 <button
-                                                    onClick={() => dispatch(decreaseQty(item.id))}
+                                                    onClick={() => {dispatch(decreaseQty(item.id));
+                                                                    const newPieces = Math.max(0, (item.pieces ?? 0) -1);
+                                                                    dispatch(updateDesign({id: item.id, updateData: { pieces: newPieces }}));
+                                                    }}
                                                     className="p-1 bg-white rounded-md shadow hover:bg-gray-200"
                                                 >
                                                     <Minus size={14} />
                                                 </button>
-
                                                 <span className="font-semibold">{item.pieces}</span>
-
                                                 <button
-                                                    onClick={() => dispatch(increaseQty(item.id))}
+                                                    onClick={() => {dispatch(increaseQty(item.id));
+                                                                dispatch(updateDesign({ id: item.id, updatedData: { pieces: item.pieces + 1 } }));
+                                                    }}
                                                     className="p-1 bg-white rounded-md shadow hover:bg-gray-200"
                                                 >
                                                     <Plus size={14} />

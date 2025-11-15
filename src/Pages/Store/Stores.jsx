@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Disclosure } from "@headlessui/react";
-import { ArrowBigLeft, HeartPlus, Heart } from "lucide-react";
+import { ArrowBigLeft, HeartPlus, Heart, CircleCheckBig } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
@@ -13,14 +13,16 @@ import { updateDesign } from "../../Pages/Items/itemDesignSlice";
 import { Addcart } from "./Addcart";
 import { Addfilter } from "./Addfilter";
 
-// ✅ Correct cartSlice import
-import { addToCart } from "../../Pages/Store/CartSlice";
+
+import { addToCart, removeFromCart } from "../../Pages/Store/CartSlice";
 
 export function Stores() {
 
     const designs = useSelector((state) =>
         state.itemDesign.data.filter((d) => d.status === "Active")
     );
+
+    const [columns, setColumns] = React.useState(4)
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -37,16 +39,25 @@ export function Stores() {
         );
     };
 
-    const updatePieces = (id, newPieces) => {
-        if (newPieces < 1) return;
+    const updatePieces = (id, newPieces, design) => {
+        if (newPieces < 0) return;
+
         dispatch(updateDesign({ id, updatedData: { pieces: newPieces } }));
+
+        if (newPieces > 0) {
+            dispatch(addToCart({ ...design, pieces: newPieces })); 
+        }else{
+        dispatch(removeFromCart(id));
+        }
     };
+
+
 
     const favoriteItems = designs.filter((d) => d.isFavorite);
 
     return (
         <>
-            {/* NAVBAR */}
+
             <Disclosure
                 as="nav"
                 className="relative bg-white shadow-sm border-b border-gray-200"
@@ -54,7 +65,7 @@ export function Stores() {
                 <div className="mx-auto w-full px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center justify-between">
 
-                        {/* LOGO */}
+
                         <div className="flex items-center">
                             <div className="flex items-center justify-center bg-black text-white font-bold rounded-full h-10 w-10">
                                 GS
@@ -64,16 +75,16 @@ export function Stores() {
                             </span>
                         </div>
 
-                        {/* RIGHT SIDE BUTTONS */}
+
                         <div className="flex items-center space-x-4">
 
-                            {/* ❤️ WISHLIST POPOVER */}
+
                             <Popover>
                                 <PopoverTrigger asChild>
                                     <button className="relative rounded-full p-2 text-gray-700 hover:text-red-500 hover:bg-gray-100 transition-all duration-200">
                                         <HeartPlus className="w-6 h-6" />
 
-                                        {/* BADGE */}
+
                                         {favoriteItems.length > 0 && (
                                             <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] px-1.5 py-px rounded-full font-bold">
                                                 {favoriteItems.length}
@@ -108,7 +119,7 @@ export function Stores() {
                                     ) : (
                                         <div className="max-h-80 overflow-y-auto space-y-4">
 
-                                            {/* FAVORITE ITEMS */}
+
                                             {favoriteItems.map((item) => (
                                                 <div
                                                     key={item.id}
@@ -135,7 +146,7 @@ export function Stores() {
                                                 </div>
                                             ))}
 
-                                            {/* ADD ALL TO CART */}
+
                                             <Button
                                                 onClick={() => {
                                                     favoriteItems.forEach((item) =>
@@ -158,15 +169,19 @@ export function Stores() {
                 </div>
             </Disclosure>
 
-            {/* MAIN PAGE */}
-            <main className="bg-gray-50 min-h-screen py-10 px-6">
 
-                {/* TOP FILTER ROW */}
+            <main className="bg-gray-50 min-h-screen py-4 px-6">
+
+
                 <div className="flex justify-between items-center mb-6">
                     <Addfilter />
 
                     <div className="flex items-center gap-3">
-                        <select className="border border-gray-300 rounded-lg px-2 py-0.5 bg-white text-black hover:bg-black hover:text-white font-bold">
+                        <select className="border border-gray-300 rounded-lg px-2 py-0.5 bg-white text-black hover:bg-black
+                        hover:text-white font-bold"
+                        value={columns}
+                        onChange={(e) => setColumns(Number(e.target.value))}
+                        >
                             <option value="2">2</option>
                             <option value="4">4</option>
                             <option value="6">6</option>
@@ -184,11 +199,16 @@ export function Stores() {
                     </div>
                 </div>
 
-                {/* PRODUCT LIST */}
-                <div className="bg-white">
-                    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
 
-                        <div className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+                <div className="bg-white">
+                    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-6">
+
+                        <div className="grid gap-x-4 gap-y-6"
+
+                        style={{
+                                    gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
+                        }}
+                        >
 
                             {designs.length === 0 && (
                                 <p className="text-gray-500 text-center col-span-full">
@@ -201,8 +221,12 @@ export function Stores() {
                                     key={design.id}
                                     className="group relative border rounded-xl p-3 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer"
                                 >
+                                    {design.pieces > 0 && (
+                                        <span className="absolute top-3 left-3 bg-green-400 text-white text-md px-3 py-0.5 rounded-sm z-50">
+                                            {design.pieces}pcs
+                                        </span>
+                                    )}
 
-                                    {/* ❤️ Favorite Button */}
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
@@ -217,7 +241,7 @@ export function Stores() {
                                         )}
                                     </button>
 
-                                    {/* IMAGE WITH ZOOM */}
+
                                     <div className="mt-2">
                                         <Dialog>
                                             <DialogTrigger asChild>
@@ -238,7 +262,7 @@ export function Stores() {
                                         </Dialog>
                                     </div>
 
-                                    {/* TEXT DETAILS */}
+
                                     <div className="mt-3">
                                         <h3 className="text-sm font-bold text-black">{design.design}</h3>
                                         <p className="text-sm text-gray-700 mt-0.5">
@@ -251,34 +275,26 @@ export function Stores() {
                                             Design No: {design.supplierdn}
                                         </p>
 
-                                        {/* PIECE COUNTER */}
+
                                         <div className="mt-4 flex items-center justify-between bg-gray-100 rounded-lg p-2">
                                             <button
-                                                onClick={() => updatePieces(design.id, design.pieces - 1)}
+                                                onClick={() => updatePieces(design.id, (design.pieces ?? 0) - 1, design)}
                                                 className="px-3 py-1 bg-white rounded-md shadow hover:bg-gray-200"
                                             >
                                                 -
                                             </button>
 
                                             <span className="font-semibold">
-                                                {design.pieces || 1}
+                                                {design.pieces ?? 0}
                                             </span>
 
                                             <button
-                                                onClick={() => updatePieces(design.id, (design.pieces || 1) + 1)}
+                                                onClick={() => updatePieces(design.id, (design.pieces ?? 0) + 1, design)}
                                                 className="px-3 py-1 bg-white rounded-md shadow hover:bg-gray-200"
                                             >
                                                 +
                                             </button>
                                         </div>
-
-                                        {/* ADD TO CART BUTTON */}
-                                        <Button
-                                            onClick={() => dispatch(addToCart(design))}
-                                            className="w-full mt-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold py-1.5 rounded-lg"
-                                        >
-                                            Add to Cart
-                                        </Button>
                                     </div>
                                 </div>
                             ))}
